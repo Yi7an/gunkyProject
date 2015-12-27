@@ -6,7 +6,7 @@ Where your series come with you.
 First of all you should have the dependency packages installed, can install them doing:
 
 ```bash
-pip freeze -r requeriments.txt
+pip freeze -r requirements.txt
 ```
 
 
