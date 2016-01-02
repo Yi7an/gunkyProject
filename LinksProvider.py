@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pyvirtualdisplay import Display
-
 class LinksProvider ():
 
     def __init__ (self, name):

@@ -31,11 +31,13 @@ class Domain ():
 		print ''
 		print '  -> finding serie "' + serieName + '"'
 		serieData = self._ctrlProviders.loadSerie (serieName.lower())
-		serieMainPages = self._ctrlProviders.getMainInfo (serieName.lower())
 		if serieData == None:
 			raise Exception ('Serie "' + serieName + '" not found')
 			self._ctrlProviders.printSuggerencies ()
 
+		serieMainPages = self._ctrlProviders.getMainInfo (serieName.lower())
+
+		
 		serie = Serie ()
 		serie.loadSerie (serieData)
 		serie.setMainPageLinks (serieMainPages)

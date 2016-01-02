@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pyvirtualdisplay import Display
 import requests
 import time
 from LinksProvider import LinksProvider
@@ -19,8 +20,8 @@ class LinksProviderSeriesPepito (LinksProvider):
         if serieName == 'house m.d.':
             serieName = 'house, m.d.'
 
-        self.display = Display(visible=0, size=(800, 600))
-        self.display.start()
+        display = Display(visible=0, size=(800, 600))
+        display.start()
 
         self.driver = webdriver.Firefox()
         self.driver.set_page_load_timeout(60)
@@ -36,14 +37,14 @@ class LinksProviderSeriesPepito (LinksProvider):
                 li = self.driver.find_element_by_class_name ('ui-menu-item')
                 data = _parser.feed(str(li.get_attribute('innerHTML')))
                 menuItemFound = True
-                self.display.stop()
+                display.stop()
                 return data.get_childs()[0].attrs['href'][0]
 
             except Exception as e:
                 time.sleep (1)
                 tries -= 1
                 if tries == 0:
-                    self.display.stop()
+                    display.stop()
                     raise Exception ('Serie not found in SeriesPepito')
 
     def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber):
