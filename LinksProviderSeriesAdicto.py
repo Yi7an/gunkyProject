@@ -10,8 +10,7 @@ class LinksProviderSeriesAdicto (LinksProvider):
 
     def __init__ (self):
         self._URL = 'http://seriesadicto.com/'
-        self._parser = Parser ()
-        LinksProvider.__init__ (self)
+        LinksProvider.__init__ (self, 'SeriesAdicto')
 
     def getMainPageLink (self, serieName):
         url = self._URL + 'buscar/' + serieName.replace(' ', '%20')
@@ -20,7 +19,8 @@ class LinksProviderSeriesAdicto (LinksProvider):
         if r.status_code != 200:
             raise Exception (' -> error getting serie from SeriesFlv')
 
-        data = self._parser.feed (r.text)
+        _parser = Parser ()
+        data = _parser.feed (r.text)
 
         clazz = data.get_by (clazz = 'col-xs-6 col-sm-4 col-md-2')
         if len (clazz) != 1:
@@ -34,7 +34,8 @@ class LinksProviderSeriesAdicto (LinksProvider):
         if r.status_code != 200:
             raise Exception (' -> error getting serie from SeriesFlv')
 
-        data = self._parser.feed (r.text)
+        _parser = _parser ()
+        data = _parser.feed (r.text)
         td = data.get_by (tag = 'td', clazz = 'sape')
 
         cNumber = ''
@@ -50,7 +51,7 @@ class LinksProviderSeriesAdicto (LinksProvider):
                 url = self._URL + str(t.get_childs()[1].attrs['href'][0])
 
                 r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
-                data = self._parser.feed (r.text)
+                data = _parser.feed (r.text)
 
                 tbody = data.get_by (tag = 'tbody')[0]
                 for tr in tbody.get_childs ():

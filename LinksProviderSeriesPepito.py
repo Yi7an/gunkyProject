@@ -13,12 +13,14 @@ class LinksProviderSeriesPepito (LinksProvider):
 
     def __init__ (self):
         self._URL = 'http://www.seriespepito.to/'
-    	self._parser = Parser ()
-        LinksProvider.__init__ (self)
+        LinksProvider.__init__ (self, 'SeriesPepito')
 
     def getMainPageLink (self, serieName):
         if serieName == 'house m.d.':
             serieName = 'house, m.d.'
+
+        self.display = Display(visible=0, size=(800, 600))
+        self.display.start()
 
         self.driver = webdriver.Firefox()
         self.driver.set_page_load_timeout(60)
@@ -30,15 +32,18 @@ class LinksProviderSeriesPepito (LinksProvider):
         tries = 5
         while not menuItemFound:
             try:
+                _parser = Parser ()
                 li = self.driver.find_element_by_class_name ('ui-menu-item')
-                data = self._parser.feed(str(li.get_attribute('innerHTML')))
+                data = _parser.feed(str(li.get_attribute('innerHTML')))
                 menuItemFound = True
+                self.display.stop()
                 return data.get_childs()[0].attrs['href'][0]
 
             except Exception as e:
                 time.sleep (1)
                 tries -= 1
                 if tries == 0:
+                    self.display.stop()
                     raise Exception ('Serie not found in SeriesPepito')
 
     def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber):
@@ -47,7 +52,8 @@ class LinksProviderSeriesPepito (LinksProvider):
         if r.status_code != 200:
             raise Exception (' -> error getting serie from SeriesPepito')
 
-        data = self._parser.feed (r.text)
+        _parser = Parser ()
+        data = _parser.feed (r.text)
         td = data.get_by (tag = 'td')
 
         found = False
@@ -58,7 +64,7 @@ class LinksProviderSeriesPepito (LinksProvider):
                 found = True
                 url = str (t.get_childs() [0].attrs ['href'] [0])
                 r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
-                data = self._parser.feed (r.text)
+                data = _parser.feed (r.text)
 
                 tbody = data.get_by (tag = 'tbody')[1]
 
@@ -84,7 +90,7 @@ class LinksProviderSeriesPepito (LinksProvider):
                     l.setHost (host)
 
                     r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
-                    data = self._parser.feed (r.text)
+                    data = _parser.feed (r.text)
                     l.setURL (str(data.get_by (clazz = 'btn btn-mini enlace_link')[0].attrs['href'][0]))
 
                     itemFound = False

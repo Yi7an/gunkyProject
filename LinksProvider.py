@@ -5,6 +5,8 @@ from pyvirtualdisplay import Display
 
 class LinksProvider ():
 
-    def __init__ (self):
-        self.display = Display(visible=0, size=(800, 600))
-        self.display.start()
+    def __init__ (self, name):
+        self._name = name
+
+    def getName (self):
+        return self._name

@@ -10,8 +10,7 @@ class LinksProviderSeriesFlv (LinksProvider):
 
     def __init__ (self):
         self._URL = 'http://www.seriesflv.net/api/'
-        self._parser = Parser ()
-        LinksProvider.__init__ (self)
+        LinksProvider.__init__ (self, 'SeriesFlv')
 
     def getMainPageLink (self, serieName):
         if serieName == 'house m.d.':
@@ -23,7 +22,8 @@ class LinksProviderSeriesFlv (LinksProvider):
         if r.status_code != 200:
             raise Exception (' -> error getting serie from SeriesFlv')
 
-        data = self._parser.feed (r.text)
+        _parser = Parser ()
+        data = _parser.feed (r.text)
 
         if len (data.get_by (tag = 'a')) < 1:
             raise Exception (' -> serie "' + serieName + '" not found in SeriesFlv')
@@ -36,7 +36,8 @@ class LinksProviderSeriesFlv (LinksProvider):
         if r.status_code != 200:
             raise Exception (' -> error getting serie from SeriesFlv')
 
-        data = self._parser.feed (r.text)
+        _parser = Parser ()
+        data = _parser.feed (r.text)
         td = data.get_by (tag = 'td', clazz = 'sape')
 
         cNumber = ''
@@ -51,7 +52,7 @@ class LinksProviderSeriesFlv (LinksProvider):
                 found = True
                 url = str(t.get_childs()[1].attrs['href'][0])
                 r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
-                data = self._parser.feed (r.text)
+                data = _parser.feed (r.text)
 
                 tbody = data.get_by (tag = 'tbody')[0]
                 for tr in tbody.get_childs ():
@@ -76,7 +77,7 @@ class LinksProviderSeriesFlv (LinksProvider):
                     l.setHost (host)
 
                     r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
-                    data = self._parser.feed (r.text)
+                    data = _parser.feed (r.text)
                     l.setURL (str(data.get_by (tag = 'meta')[0].attrs['content'][0].split('=')[1]))
 
                     itemFound = False

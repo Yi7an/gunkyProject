@@ -13,7 +13,7 @@ class InfoProviderImdb (InfoProvider):
         self._imdb = imdb.IMDb ()
         self._imdbAPIurl = 'http://www.omdbapi.com/?'
         self._suggerencies = []
-        self._setName ('Imdb')
+        InfoProvider.__init__ (self, 'IMDB')
 
     def _getSerie (self, imdbID):
         r = requests.get(self._imdbAPIurl + 'type=serie' + '&i=tt' + imdbID)

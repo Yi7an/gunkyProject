@@ -6,9 +6,6 @@ import time
 
 class DownloadStreamCloud (Download):
 
-    def __init__ (self):
-        Download.__init__ (self)
-
     def getVideoLink (self, totalLines):
         for line in totalLines:
             if 'file: "http://' in line:
@@ -20,6 +17,10 @@ class DownloadStreamCloud (Download):
             time.sleep(1)
 
     def downloadVideo (self, link, name):
+
+        self.display = Display(visible=0, size=(800, 600))
+        self.display.start()
+
         self.driver = webdriver.Firefox()
         self.driver.set_page_load_timeout(60)
 
@@ -35,3 +36,5 @@ class DownloadStreamCloud (Download):
         self.downloadVideoFile (videoLink, name)
 
         self.driver.quit()
+
+        self.display.stop ()

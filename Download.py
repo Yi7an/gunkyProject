@@ -6,10 +6,6 @@ import requests
 
 class Download ():
 
-    def __init__ (self):
-        self.display = Display(visible=0, size=(800, 600))
-        self.display.start()
-
     def downloadVideoFile (self, videoLink, name):
     	r = requests.get (videoLink, stream = True)
     	totalLength = float (r.headers.get ('content-length'))
