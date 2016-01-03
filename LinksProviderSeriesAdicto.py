@@ -34,7 +34,7 @@ class LinksProviderSeriesAdicto (LinksProvider):
         if r.status_code != 200:
             raise Exception (' -> error getting serie from SeriesFlv')
 
-        _parser = _parser ()
+        _parser = Parser ()
         data = _parser.feed (r.text)
         td = data.get_by (tag = 'td', clazz = 'sape')
 

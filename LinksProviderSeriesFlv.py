@@ -48,7 +48,7 @@ class LinksProviderSeriesFlv (LinksProvider):
 
         chapterUrlArray = []
         for t in td:
-            if not found and ' ' + str(seasonNumber) + 'x' + cNumber in str(t.get_childs()[1].attrs['data'][0]):
+            if not found and ' ' + str(seasonNumber) + 'x' + cNumber in str(t.get_childs()[1].attrs['data'][0].encode('utf-8')):
                 found = True
                 url = str(t.get_childs()[1].attrs['href'][0])
                 r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
