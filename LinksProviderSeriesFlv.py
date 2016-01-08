@@ -20,13 +20,16 @@ class LinksProviderSeriesFlv (LinksProvider):
         r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
-            raise Exception (' -> error getting serie from SeriesFlv')
+            raise Exception ('  -> error getting serie from SeriesFlv')
 
+
+        if 'is currently offline' in r.text:
+            raise Exception (' -> web SeriesFlv offline')
         _parser = Parser ()
         data = _parser.feed (r.text)
 
         if len (data.get_by (tag = 'a')) < 1:
-            raise Exception (' -> serie "' + serieName + '" not found in SeriesFlv')
+            raise Exception ('  -> serie "' + serieName + '" not found in SeriesFlv')
 
         return data.get_by (tag = 'a')[0].attrs['href'][0]
 

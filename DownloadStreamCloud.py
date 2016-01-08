@@ -1,5 +1,6 @@
 #! /usr/bin/python
 
+from pyvirtualdisplay import Display
 from selenium import webdriver
 from Download import Download
 import time

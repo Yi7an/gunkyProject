@@ -37,7 +37,7 @@ class Domain ():
 
 		serieMainPages = self._ctrlProviders.getMainInfo (serieName.lower())
 
-		
+
 		serie = Serie ()
 		serie.loadSerie (serieData)
 		serie.setMainPageLinks (serieMainPages)
@@ -212,4 +212,5 @@ class Domain ():
 			while chapterNumber <= len (serie.getSeasons () [seasonNumber -1].getChapters ()):
 				self.downloadChapter (serieName, seasonNumber, chapterNumber)
 				chapterNumber += 1
+		print '  -> Season ' + str (seasonNumber) + ' download successful'
 		print ''

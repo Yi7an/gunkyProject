@@ -17,14 +17,14 @@ class LinksProviderSeriesAdicto (LinksProvider):
         r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
-            raise Exception (' -> error getting serie from SeriesFlv')
+            raise Exception ('  -> error getting serie from SeriesFlv')
 
         _parser = Parser ()
         data = _parser.feed (r.text)
 
         clazz = data.get_by (clazz = 'col-xs-6 col-sm-4 col-md-2')
         if len (clazz) != 1:
-            raise Exception (' -> serie "' + serieName + '" not found in SeriesFlv')
+            raise Exception ('  -> serie "' + serieName + '" not found in SeriesFlv')
 
         return self._URL[:-1] + str(clazz[0].get_childs()[0].attrs['href'][0])
 
@@ -40,13 +40,10 @@ class LinksProviderSeriesAdicto (LinksProvider):
 
         cNumber = ''
         found = False
-        if chapterNumber < 10:
-            cNumber = '0'
-        cNumber += str(chapterNumber)
 
         chapterUrlArray = []
         for t in td:
-            if not found and '/' + str(seasonNumber) + '/' + cNumber in str(t.get_childs()[1].attrs['href'][0]):
+            if not found and '/' + str(seasonNumber) + '/' + str(chapterNumber) in str(t.get_childs()[1].attrs['href'][0]):
                 found = True
                 url = self._URL + str(t.get_childs()[1].attrs['href'][0])
 

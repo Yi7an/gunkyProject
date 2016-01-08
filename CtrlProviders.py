@@ -59,15 +59,15 @@ class CtrlProviders ():
 
 	def getMainInfo (self, serieName):
 		mainPages = []
-		try:
-			mainPages.append (self._linkProviderSeriesFlv.getMainPageLink (serieName))
-		except Exception as e:
-			print str(e)
+		#try:
+		#	mainPages.append (self._linkProviderSeriesFlv.getMainPageLink (serieName))
+		#except Exception as e:
+		#	print str(e)
 			#pass
-		try:
-			mainPages.append (self._linksProviderSeriesPepito.getMainPageLink (serieName))
-		except Exception as e:
-			print str(e)
+		#try:
+		#	mainPages.append (self._linksProviderSeriesPepito.getMainPageLink (serieName))
+		#except Exception as e:
+		#	print str(e)
 			#pass
 		try:
 			mainPages.append (self._linksProviderSeriesAdicto.getMainPageLink (serieName))

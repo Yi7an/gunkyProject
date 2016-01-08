@@ -45,7 +45,7 @@ class LinksProviderSeriesPepito (LinksProvider):
                 tries -= 1
                 if tries == 0:
                     display.stop()
-                    raise Exception ('Serie not found in SeriesPepito')
+                    raise Exception ('  -> Serie not found in SeriesPepito')
 
     def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber):
         r = requests.get (serieUrl, headers={ "user-agent": "Mozilla/5.0" })

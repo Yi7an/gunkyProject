@@ -1,6 +1,5 @@
 #! /usr/bin/python
 
-from pyvirtualdisplay import Display
 from sys import stdout
 import requests
 
