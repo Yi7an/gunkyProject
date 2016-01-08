@@ -19,7 +19,7 @@ class CtrlDisk ():
 		if not os.path.exists (self.SERIE_PATH + '/' + toPath):
 			os.makedirs (self.SERIE_PATH + '/' + toPath)
 
-		shutil.move ('./tmp-dl/' + fromPath, self.SERIE_PATH + '/' + toPath)
+		shutil.move ('./tmp-dl/' + fromPath, self.SERIE_PATH + '/' + toPath.replace ('?',''))
 
 	def getLastChapter (self, serieName):
 		if not os.path.exists (self.SERIE_PATH + '/' + serieName):
