@@ -51,7 +51,7 @@ class LinksProviderSeriesPepito (LinksProvider):
         r = requests.get (serieUrl, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
-            raise Exception (' -> error getting serie from SeriesPepito')
+            raise Exception ('  -> error getting serie from SeriesPepito')
 
         _parser = Parser ()
         data = _parser.feed (r.text)

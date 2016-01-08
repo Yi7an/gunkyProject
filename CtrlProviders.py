@@ -62,15 +62,18 @@ class CtrlProviders ():
 		try:
 			mainPages.append (self._linkProviderSeriesFlv.getMainPageLink (serieName))
 		except Exception as e:
-			pass
+			print str(e)
+			#pass
 		try:
 			mainPages.append (self._linksProviderSeriesPepito.getMainPageLink (serieName))
 		except Exception as e:
-			pass
+			print str(e)
+			#pass
 		try:
 			mainPages.append (self._linksProviderSeriesAdicto.getMainPageLink (serieName))
 		except Exception as e:
-			pass
+			print str(e)
+			#pass
 
 		return mainPages
 
