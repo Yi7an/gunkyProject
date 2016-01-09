@@ -76,15 +76,26 @@ class CtrlProviders ():
 
 	def getChapterUrls (self, mainPagesLinks, seasonNumber, chapterNumber):
 		data = []
+		print ''
 		for mainPage in mainPagesLinks:
+
 			if 'seriesflv' in mainPage:
-				chapterUrls = self._linkProviderSeriesFlv.getChapterUrls (mainPage, seasonNumber, chapterNumber)
-				data += chapterUrls
+				try:
+					chapterUrls = self._linkProviderSeriesFlv.getChapterUrls (mainPage, seasonNumber, chapterNumber)
+					data += chapterUrls
+				except Exception as e:
+					print '  -> error retrieving chapters from seriesFlv'
 			elif 'seriespepito' in mainPage:
-				chapterUrls = self._linksProviderSeriesPepito.getChapterUrls (mainPage, seasonNumber, chapterNumber)
-				data += chapterUrls
+				try:
+					chapterUrls = self._linksProviderSeriesPepito.getChapterUrls (mainPage, seasonNumber, chapterNumber)
+					data += chapterUrls
+				except Exception as e:
+					print '  -> error retrieving chapters from seriesPepito'
 			elif 'seriesadicto' in mainPage:
-				chapterUrls = self._linksProviderSeriesAdicto.getChapterUrls (mainPage, seasonNumber, chapterNumber)
-				data += chapterUrls
+				try:
+					chapterUrls = self._linksProviderSeriesAdicto.getChapterUrls (mainPage, seasonNumber, chapterNumber)
+					data += chapterUrls
+				except Exception as e:
+					print '  -> error retrieving chapters from seriesAdicto'
 
 		return data

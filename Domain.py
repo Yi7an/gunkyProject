@@ -32,7 +32,7 @@ class Domain ():
 		print '  -> finding serie "' + serieName + '"'
 		serieData = self._ctrlProviders.loadSerie (serieName.lower())
 		if serieData == None:
-			raise Exception ('Serie "' + serieName + '" not found')
+			raise Exception ('  -> serie "' + serieName + '" not found')
 			self._ctrlProviders.printSuggerencies ()
 
 		serieMainPages = self._ctrlProviders.getMainInfo (serieName.lower())
@@ -61,7 +61,7 @@ class Domain ():
 			serie = self._getSerie (serieName)
 			serie.printSerie ()
 		except Exception as e:
-			print '  -> Serie "' + serieName + '" not found'
+			print '  -> serie "' + serieName + '" not found'
 			self._ctrlProviders.printSuggerencies ()
 
 	def updateSerie (self, serieName):
@@ -69,7 +69,6 @@ class Domain ():
 
 	def _selectChapter (self, links):
 		possibleLinks = []
-		print ''
 		for i, l in enumerate(links):
 			stdout.write('   -> #' + str( i + 1 ) + ' - ')
 
@@ -117,7 +116,7 @@ class Domain ():
 		try:
 			serie = self._getSerie (serieName)
 		except Exception as e:
-			print '  -> Serie "' + serieName + '" not found'
+			print '  -> serie "' + serieName + '" not found'
 			self._ctrlProviders.printSuggerencies ()
 			return
 
@@ -128,38 +127,41 @@ class Domain ():
 				if len (serie.getSeasons ()[seasonNumber-1].getChapters ()[chapterNumber-1].getLinkArray ()) == 0:
 					chapterUrls = self._ctrlProviders.getChapterUrls(serie.getMainPageLinks (), seasonNumber, chapterNumber)
 					if isNumber (chapterUrls):
-						print '  -> Error, can\'t retrieve the chapter (Error ' + str(chapterUrls) + ')'
-						raise Exception ('Error, can\'t retrieve the chapter')
+						print '  -> error, can\'t retrieve the chapter (Error ' + str(chapterUrls) + ')'
+						raise Exception ('error, can\'t retrieve the chapter')
 					serie.getSeasons ()[seasonNumber-1].getChapters ()[chapterNumber-1].appendLinkArray (chapterUrls)
 					self._ctrlDisk.storeSerie (serie)
 
 				chapterUrls = serie.getSeasons ()[seasonNumber-1].getChapters ()[chapterNumber-1].getLinkArray ()
 				name = self._buildName (serie, seasonNumber, chapterNumber)
 
-				downloadErr = True
-				while downloadErr:
-					selectedChapter = self._selectChapter (chapterUrls)
-					try:
-						self._ctrlProviders.downloadVideo (selectedChapter.getURL (), \
-												   selectedChapter.getHost (),\
-												   name)
+				if len(chapterUrls) > 0:
 
-						self._ctrlDisk.moveFile (name, serie.getName ())
+					downloadErr = True
+					while downloadErr:
+						selectedChapter = self._selectChapter (chapterUrls)
+						try:
+							self._ctrlProviders.downloadVideo (selectedChapter.getURL (), \
+													   selectedChapter.getHost (),\
+													   name)
 
-						downloadErr = False
-					except Exception as e:
-						#print str(e)
-						print '  -> error downloading chapter'
-						iterator = 0
-						deleted = False
-						while iterator < len (chapterUrls) and not deleted:
-							if selectedChapter.getURL () is chapterUrls [iterator].getURL ():
-								print '  -> link deleted'
-								chapterUrls.pop (iterator)
-								serie.getSeasons ()[seasonNumber-1].getChapters ()[chapterNumber-1].setLinkArray (chapterUrls)
-								self._ctrlDisk.storeSerie (serie)
-								deleted = True
-							iterator += 1
+							self._ctrlDisk.moveFile (name, serie.getName ())
+
+							downloadErr = False
+						except Exception as e:
+							print '  -> error downloading chapter "' + name + '"'
+							iterator = 0
+							deleted = False
+							while iterator < len (chapterUrls) and not deleted:
+								if selectedChapter.getURL () is chapterUrls [iterator].getURL ():
+									print '  -> link deleted'
+									chapterUrls.pop (iterator)
+									serie.getSeasons ()[seasonNumber-1].getChapters ()[chapterNumber-1].setLinkArray (chapterUrls)
+									self._ctrlDisk.storeSerie (serie)
+									deleted = True
+								iterator += 1
+				else:
+					print '  -> no links found, skipping chapter '
 
 			else:
 				print ''
@@ -173,7 +175,7 @@ class Domain ():
 		try:
 			serie = self._getSerie (serieName)
 		except Exception as e:
-			print ' -> Serie "' + serieName + '" not found'
+			print ' -> serie "' + serieName + '" not found'
 			return
 
 		if serie == None:
@@ -199,7 +201,7 @@ class Domain ():
 		try:
 			serie = self._getSerie (serieName)
 		except Exception as e:
-			print ' -> Serie "' + serieName + '" not found'
+			print ' -> serie "' + serieName + '" not found'
 			return
 
 		if serie == None:
@@ -212,5 +214,5 @@ class Domain ():
 			while chapterNumber <= len (serie.getSeasons () [seasonNumber -1].getChapters ()):
 				self.downloadChapter (serieName, seasonNumber, chapterNumber)
 				chapterNumber += 1
-		print '  -> Season ' + str (seasonNumber) + ' download successful'
+		print '  -> season ' + str (seasonNumber) + ' download successful'
 		print ''
