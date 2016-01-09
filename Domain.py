@@ -69,6 +69,7 @@ class Domain ():
 
 	def _selectChapter (self, links):
 		possibleLinks = []
+		print ''
 		for i, l in enumerate(links):
 			stdout.write('   -> #' + str( i + 1 ) + ' - ')
 
@@ -78,14 +79,13 @@ class Domain ():
 				   'streamin' in l.getHost ().lower ():
 					possibleLinks.append(l)
 			l.printLink ()
-		print ''
 
 		if len(possibleLinks) > 1:
 			rand = randint (0, len(possibleLinks)-1)
 			for j, l in enumerate(links):
 				if l.getURL () in possibleLinks [rand].getURL ():
-					print '  -> link #' + str( j + 1 ) + ' automatically selected'
 					print ''
+					print '  -> link #' + str( j + 1 ) + ' automatically selected'
 					return possibleLinks [rand]
 
 		else:
@@ -140,6 +140,7 @@ class Domain ():
 					downloadErr = True
 					while downloadErr:
 						selectedChapter = self._selectChapter (chapterUrls)
+
 						try:
 							self._ctrlProviders.downloadVideo (selectedChapter.getURL (), \
 													   selectedChapter.getHost (),\
