@@ -73,6 +73,9 @@ class LinksProviderSeriesFlv (LinksProvider):
                         l.setSubtitles ('Spanish')
                     elif 'en.' in langFlagImg:
                         l.setLanguage ('English')
+                    elif 'vosi.' in langFlagImg:
+                        l.setLanguage ('English')
+                        l.setSubtitles ('English')
 
                     host = str (tr.get_childs ()[2].get_childs()[0].data[0]).lower ()
                     url = str (tr.get_childs ()[3].get_childs()[0].attrs['href'][0])

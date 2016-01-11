@@ -5,16 +5,23 @@ from selenium import webdriver
 from Download import Download
 import time
 
-class DownloadStreamCloud (Download):
+class DownloadStreamPlay (Download):
 
     def getVideoLink (self, totalLines):
         for line in totalLines:
-            if 'file: "http://' in line:
-                return line.split ('"')[1]
+            if 'eval(function(' in line:
+
+                splitted = line.split('|')
+
+                ip = splitted[29] + '.' + splitted[28] + '.' + splitted[27] + '.' + splitted[26]
+                hash = splitted[48]
+                format = splitted[47]
+
+                return 'http://' + ip + '/' + hash + '/v.' + format
 
     def waitForLink (self, elem):
         print '  -> waiting for the page load'
-        while not 'blue' in elem.get_attribute("class"):
+        while elem.get_attribute('disabled') == 'true':
             time.sleep(1)
 
     def downloadVideo (self, link, name):

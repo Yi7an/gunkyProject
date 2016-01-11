@@ -4,6 +4,7 @@
 from DownloadStreamCloud import DownloadStreamCloud
 from DownloadNowVideo import DownloadNowVideo
 from DownloadStreamin import DownloadStreamin
+from DownloadStreamPlay import DownloadStreamPlay
 
 from InfoProviderImdb import InfoProviderImdb
 
@@ -35,9 +36,9 @@ class CtrlProviders ():
 		elif 'streamin' in host.lower():
 			d =  DownloadStreamin ()
 			downloadErr = d.downloadVideo (url, name)
-		#elif 'turbovideos' in host.lower():
-		#	d =  DownloadTurbovideos ()
-		#	downloadErr = d.downloadVideo (url, name)
+		elif 'streamplay' in host.lower():
+			d =  DownloadStreamPlay ()
+			downloadErr = d.downloadVideo (url, name)
 		else:
 			print '  -> host "' + host + '" not defined for download'
 
@@ -62,21 +63,24 @@ class CtrlProviders ():
 		try:
 			mainPages.append (self._linkProviderSeriesFlv.getMainPageLink (serieName))
 		except Exception as e:
-			print str(e)
+			pass
+			#print str(e)
 		try:
 			mainPages.append (self._linksProviderSeriesPepito.getMainPageLink (serieName))
 		except Exception as e:
-			print str(e)
+			pass
+			#print str(e)
 		try:
 			mainPages.append (self._linksProviderSeriesAdicto.getMainPageLink (serieName))
 		except Exception as e:
-			print str(e)
+			pass
+			#print str(e)
 
 		return mainPages
 
 	def getChapterUrls (self, mainPagesLinks, seasonNumber, chapterNumber):
 		data = []
-		print ''
+		#print ''
 		for mainPage in mainPagesLinks:
 
 			if 'seriesflv' in mainPage:
@@ -84,18 +88,21 @@ class CtrlProviders ():
 					chapterUrls = self._linkProviderSeriesFlv.getChapterUrls (mainPage, seasonNumber, chapterNumber)
 					data += chapterUrls
 				except Exception as e:
-					print '  -> error retrieving chapters from seriesFlv'
+					pass
+					#print '  -> error retrieving chapters from seriesFlv'
 			elif 'seriespepito' in mainPage:
 				try:
 					chapterUrls = self._linksProviderSeriesPepito.getChapterUrls (mainPage, seasonNumber, chapterNumber)
 					data += chapterUrls
 				except Exception as e:
-					print '  -> error retrieving chapters from seriesPepito'
+					pass
+					#print '  -> error retrieving chapters from seriesPepito'
 			elif 'seriesadicto' in mainPage:
 				try:
 					chapterUrls = self._linksProviderSeriesAdicto.getChapterUrls (mainPage, seasonNumber, chapterNumber)
 					data += chapterUrls
 				except Exception as e:
-					print '  -> error retrieving chapters from seriesAdicto'
+					pass
+					#print '  -> error retrieving chapters from seriesAdicto'
 
 		return data

@@ -16,8 +16,8 @@ class DownloadNowVideo (Download):
         url = link.replace ('video/', 'mobile/video.php?id=')
         r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
 
-        self._parser = Parser ()
-        data = self._parser.feed (r.text)
+        parser = Parser ()
+        data = parser.feed (r.text)
 
         sources = data.get_by (tag = 'source')
 

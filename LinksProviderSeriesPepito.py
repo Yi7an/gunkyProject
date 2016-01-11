@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from pyvirtualdisplay import Display
+from selenium import webdriver
 import requests
 import time
+
 from LinksProvider import LinksProvider
 from Parser import Parser
 from Season import Link
-
-from selenium import webdriver
 
 class LinksProviderSeriesPepito (LinksProvider):
 
@@ -23,20 +23,21 @@ class LinksProviderSeriesPepito (LinksProvider):
         display = Display(visible=0, size=(800, 600))
         display.start()
 
-        self.driver = webdriver.Firefox()
-        self.driver.set_page_load_timeout(60)
-        self.driver.get(self._URL)
+        driver = webdriver.Firefox()
+        driver.set_page_load_timeout(60)
+        driver.get(self._URL)
 
-        self.driver.find_element_by_name ('searchquery').send_keys(serieName)
+        driver.find_element_by_name ('searchquery').send_keys(serieName)
 
         menuItemFound = False
         tries = 5
         while not menuItemFound:
             try:
                 _parser = Parser ()
-                li = self.driver.find_element_by_class_name ('ui-menu-item')
+                li = driver.find_element_by_class_name ('ui-menu-item')
                 data = _parser.feed(str(li.get_attribute('innerHTML')))
                 menuItemFound = True
+                driver.quit()
                 display.stop()
                 return data.get_childs()[0].attrs['href'][0]
 
@@ -44,8 +45,10 @@ class LinksProviderSeriesPepito (LinksProvider):
                 time.sleep (1)
                 tries -= 1
                 if tries == 0:
+                    driver.quit()
                     display.stop()
                     raise Exception ('  -> Serie not found in SeriesPepito')
+        print 'puta calle'
 
     def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber):
         r = requests.get (serieUrl, headers={ "user-agent": "Mozilla/5.0" })

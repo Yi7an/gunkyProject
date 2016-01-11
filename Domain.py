@@ -59,10 +59,12 @@ class Domain ():
 		serie = Serie ()
 		try:
 			serie = self._getSerie (serieName)
-			serie.printSerie ()
 		except Exception as e:
 			print '  -> serie "' + serieName + '" not found'
 			self._ctrlProviders.printSuggerencies ()
+			return
+
+		serie.printSerie ()
 
 	def updateSerie (self, serieName):
 		self._updateSerie (serieName)
@@ -76,7 +78,8 @@ class Domain ():
 			if 'Spanish' in l.getLanguage ():
 				if 'streamcloud' in l.getHost ().lower () or \
 				   'nowvideo' in l.getHost ().lower () or \
-				   'streamin' in l.getHost ().lower ():
+				   'streamin' in l.getHost ().lower () or \
+				   'streamplay' in l.getHost ().lower ():
 					possibleLinks.append(l)
 			l.printLink ()
 
@@ -89,12 +92,15 @@ class Domain ():
 					return possibleLinks [rand]
 
 		else:
+			print ''
 			print '  -> can\'t select a link automatically'
 			read = readInt ('which download? [1-' + str (len (links)) + ']')
+			print ''
 
 			while read > len (links) -1 or read <1:
 				print '  -> "' + str(read) + '" is not valid  number'
 				read = readInt ('which download? [1-' + str (len (links)) + ']') - 1
+				print ''
 
 			return links [read - 1]
 
@@ -122,6 +128,7 @@ class Domain ():
 
 		if serie.seasonExists (seasonNumber):
 			if serie.chapterNumberExists (seasonNumber, chapterNumber):
+				print ''
 				serie.printChapter (seasonNumber, chapterNumber)
 
 				if len (serie.getSeasons ()[seasonNumber-1].getChapters ()[chapterNumber-1].getLinkArray ()) == 0:
@@ -136,7 +143,7 @@ class Domain ():
 				name = self._buildName (serie, seasonNumber, chapterNumber)
 
 				if len(chapterUrls) > 0:
-
+					print ''
 					downloadErr = True
 					while downloadErr:
 						selectedChapter = self._selectChapter (chapterUrls)
@@ -156,6 +163,7 @@ class Domain ():
 							while iterator < len (chapterUrls) and not deleted:
 								if selectedChapter.getURL () is chapterUrls [iterator].getURL ():
 									print '  -> link deleted'
+									print ''
 									chapterUrls.pop (iterator)
 									serie.getSeasons ()[seasonNumber-1].getChapters ()[chapterNumber-1].setLinkArray (chapterUrls)
 									self._ctrlDisk.storeSerie (serie)
@@ -163,7 +171,6 @@ class Domain ():
 								iterator += 1
 				else:
 					print '  -> no links found, skipping chapter '
-
 			else:
 				print ''
 				print ' -> chapter number ' + str(chapterNumber) + ' doesn\'t exist'
@@ -195,7 +202,7 @@ class Domain ():
 					if serie.chapterNumberExists (seasonNumber + 1, 1):
 						self.downloadChapter (serieName, seasonNumber + 1, 1)
 					else:
-						print '  -> chapter 0' + str(seasonNumber + 1) + 'x01 unavailable'
+						print ' -> chapter 0' + str(seasonNumber + 1) + 'x01 unavailable'
 
 	def downloadSeason (self, serieName, seasonNumber):
 		serie = Serie ()
@@ -215,5 +222,6 @@ class Domain ():
 			while chapterNumber <= len (serie.getSeasons () [seasonNumber -1].getChapters ()):
 				self.downloadChapter (serieName, seasonNumber, chapterNumber)
 				chapterNumber += 1
+		print ''
 		print '  -> season ' + str (seasonNumber) + ' download successful'
 		print ''

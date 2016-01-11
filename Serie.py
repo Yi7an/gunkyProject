@@ -94,7 +94,6 @@ class Serie ():
 		return len (self._seasons [seasonNumber-1].getChapters ()) >= chapterNumber
 
 	def printChapter (self, seasonNumber, chapterNumber):
-		print ''
 		self._seasons [seasonNumber-1].getChapters ()[chapterNumber-1].printChapter ()
 
 	def printSerie (self):
@@ -103,7 +102,7 @@ class Serie ():
 		print ' -> description: ' + self._description
 		print ' -> links [' + str(len(self._mainPageLinks)) + ']'
 		for l in self._mainPageLinks:
-			print '   -> ' + l
+			print '   -> ' + str(l)
 		print ' -> seasons [' + str(len(self._seasons)) + ']'
 		for n, s in enumerate (self._seasons):
 			print '   -> season ' + str(n + 1) + ' [' + str (len(s.getChapters())) + ']'

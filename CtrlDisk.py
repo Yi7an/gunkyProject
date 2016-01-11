@@ -48,7 +48,6 @@ class CtrlDisk ():
 				lastChapter = int (d [3:5])
 		return lastChapter
 
-
 	def getSeries (self):
 		series = []
 
@@ -92,7 +91,6 @@ class CtrlDisk ():
 		description = serie.getDescription ()
 		mainPages = serie.getMainPageLinks ()
 		seasons = serie.getSeasons ()
-
 
 		data = []
 		data.append (serieName)

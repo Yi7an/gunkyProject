@@ -19,23 +19,28 @@ class DownloadStreamin (Download):
 
     def downloadVideo (self, link, name):
 
-        self.display = Display(visible=0, size=(800, 600))
-        self.display.start()
+        display = Display(visible=0, size=(800, 600))
+        display.start()
 
-        self.driver = webdriver.Firefox()
-        self.driver.set_page_load_timeout(60)
+        driver = webdriver.Firefox()
+        driver.set_page_load_timeout(60)
 
-        print '  -> going to ' + link
+        try:
+            print '  -> going to ' + link
 
-        self.driver.get(link)
-        time.sleep (5)
-        elem = self.driver.find_element_by_id ('btn_download')
+            driver.get(link)
+            time.sleep (5)
+            elem = driver.find_element_by_id ('btn_download')
 
-        self.waitForLink (elem)
-        elem.submit ()
+            self.waitForLink (elem)
+            elem.submit ()
 
-        videoLink = self.getVideoLink (self.driver.page_source.split ('\n'))
-        self.downloadVideoFile (videoLink, name)
+            videoLink = self.getVideoLink (driver.page_source.split ('\n'))
+            self.downloadVideoFile (videoLink, name)
 
-        self.driver.quit()
-        self.display.stop ()
+        except Exception as e:
+            raise Exception (str(e))
+
+        finally:
+            driver.quit()
+            display.stop ()
