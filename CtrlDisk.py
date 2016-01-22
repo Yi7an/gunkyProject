@@ -4,22 +4,90 @@
 import shelve
 import os
 import shutil
+import ConfigParser
+from sys import exit
 
+from Languages import Languages
 from Season import Season, Chapter
 from Serie import Serie
 
+CONFIG_FILE = 'config.conf'
+
 class CtrlDisk ():
 
-	def __init__ (self):
-		self.SERIE_PATH = '/mnt/sdcard1/Multimedia/'
-		if not os.path.exists ('./tmp-dl'):
-			os.makedirs ('./tmp-dl')
+    def __init__ (self):
+        self.readConfiguration ()
+
+        self.languages = Languages ()
+        self.readLanguages()
+
+        if not os.path.exists (self.TMP_PATH):
+            os.makedirs (self.TMP_PATH)
+
+    def getSeriePath (self):
+        return self.SERIE_PATH
+
+    def getTmpPath (self):
+        return self.TMP_PATH
+
+    def getLanguages (self):
+        return self.languages
+
+    def readConfiguration (self):
+        config = ConfigParser.ConfigParser ()
+
+        try:
+            config.read (CONFIG_FILE)
+        except Exception as e:
+            print '  -> Error reading paths configFile "' + CONFIG_FILE + '"'
+            exit (1)
+
+        try:
+            self.SERIE_PATH = config.get ('ConfigPaths', 'seriePath')
+            self.TMP_PATH = config.get ('ConfigPaths', 'tmpPath')
+
+        except Exception as e:
+            print e
+            print '  -> seriePath or tmpPath not specified in configFile "' + CONFIG_FILE + '"'
+            exit (1)
+
+    def readLanguages (self):
+        config = ConfigParser.ConfigParser ()
+
+        try:
+            config.read (CONFIG_FILE)
+        except Exception as e:
+            print '  -> Error reading languages in configFile "' + CONFIG_FILE + '"'
+            exit (1)
+
+        it = 1
+
+        for option in config.options('ConfigLanguages'):
+            langArray = []
+            try:
+                langArray.append (config.get ('ConfigLanguages', 'lang' + str(it)))
+                sub = config.get ('ConfigLanguages', 'sub' + str (it))
+                if sub == 'None':
+                    langArray.append ('')
+                else:
+                    langArray.append (sub)
+
+                self.languages.addLanguage (langArray)
+                it += 1
+            except ConfigParser.NoOptionError as e:
+                if len(langArray) == 1:
+                    print 'Error reading languages in configFile "' + CONFIG_FILE + '"'
+                    exit (1)
+                return
+
+
+
 
 	def moveFile (self, fromPath, toPath):
 		if not os.path.exists (self.SERIE_PATH + '/' + toPath):
 			os.makedirs (self.SERIE_PATH + '/' + toPath)
 
-		shutil.move ('./tmp-dl/' + fromPath, self.SERIE_PATH + '/' + toPath.replace ('?',''))
+		shutil.move (tmpPath + fromPath, self.SERIE_PATH + '/' + toPath.replace ('?',''))
 
 	def getLastChapter (self, serieName):
 		if not os.path.exists (self.SERIE_PATH + '/' + serieName):
@@ -48,38 +116,38 @@ class CtrlDisk ():
 				lastChapter = int (d [3:5])
 		return lastChapter
 
-	def getSeries (self):
-		series = []
+    def getSeries (self):
+    	series = []
 
-		try:
-			try:
-				self._cache = shelve.open ('cache.db', 'r')
-			except:
-				self._cache = shelve.open ('cache.db', 'n')
+    	try:
+    		try:
+    			self._cache = shelve.open ('cache.db', 'r')
+    		except:
+    			self._cache = shelve.open ('cache.db', 'n')
 
-			seriesName = self._cache ['seriesName']
-			for sN in seriesName:
-				s = Serie ()
-				s.setName (sN [0])
-				s.setDescription (sN[1])
-				s.setMainPageLinks (sN[2])
+    		seriesName = self._cache ['seriesName']
+    		for sN in seriesName:
+    			s = Serie ()
+    			s.setName (sN [0])
+    			s.setDescription (sN[1])
+    			s.setMainPageLinks (sN[2])
 
-				seasons = []
-				try:
-					seasons = self._cache [sN[0].encode ('utf-8')]
-				except Exception as e:
-					print '  -> Error ' + str(e)
+    			seasons = []
+    			try:
+    				seasons = self._cache [sN[0].encode ('utf-8')]
+    			except Exception as e:
+    				print '  -> Error ' + str(e)
 
-				s.setSeasons (seasons)
-				series.append (s)
-		except Exception as e:
-			pass
+    			s.setSeasons (seasons)
+    			series.append (s)
+    	except Exception as e:
+    		pass
 
-		try:
-			self._cache.close ()
-		except Exception as e:
-			pass
-		return series
+    	try:
+    		self._cache.close ()
+    	except Exception as e:
+    		pass
+    	return series
 
 	def storeSerie (self, serie):
 		try:

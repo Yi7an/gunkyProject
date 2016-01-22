@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from Domain import Domain
-from sys import exit, stdin, stdout
+from sys import stdin, stdout
 from Tools import isNumber, readString, readInt
 
 def showInfo ():

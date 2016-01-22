@@ -17,28 +17,31 @@ from Tools import isNumber
 
 class CtrlProviders ():
 
-	def __init__ (self):
-		self._infoProviderImdb = InfoProviderImdb ()
+    def __init__ (self, tmpPath):
 
-		self._linkProviderSeriesFlv = LinksProviderSeriesFlv ()
-		self._linksProviderSeriesPepito = LinksProviderSeriesPepito ()
-		self._linksProviderSeriesAdicto = LinksProviderSeriesAdicto ()
+        self.TMP_PATH = tmpPath
+
+        self._infoProviderImdb = InfoProviderImdb ()
+
+        self._linkProviderSeriesFlv = LinksProviderSeriesFlv ()
+        self._linksProviderSeriesPepito = LinksProviderSeriesPepito ()
+        self._linksProviderSeriesAdicto = LinksProviderSeriesAdicto ()
 
 	def downloadVideo (self, url, host, name):
 		if 'streamcloud' in host.lower():
 			d = DownloadStreamCloud ()
-			downloadErr = d.downloadVideo (url, name)
+			downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
 
 		elif 'nowvideo' in host.lower():
 			d = DownloadNowVideo ()
-			downloadErr = d.downloadVideo (url, name)
+			downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
 
 		elif 'streamin' in host.lower():
 			d =  DownloadStreamin ()
-			downloadErr = d.downloadVideo (url, name)
+			downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
 		elif 'streamplay' in host.lower():
 			d =  DownloadStreamPlay ()
-			downloadErr = d.downloadVideo (url, name)
+			downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
 		else:
 			print '  -> host "' + host + '" not defined for download'
 

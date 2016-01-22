@@ -11,10 +11,10 @@ from random import randint
 
 class Domain ():
 
-	def __init__ (self):
-		self._ctrlProviders = CtrlProviders ()
-		self._ctrlDisk = CtrlDisk()
-		self.series = self._ctrlDisk.getSeries ()
+    def __init__ (self):
+        self._ctrlDisk = CtrlDisk()
+        self._ctrlProviders = CtrlProviders (self._ctrlDisk.getTmpPath())
+        self.series = self._ctrlDisk.getSeries ()
 
 	def _serieAlreadyLoaded (self, serieName):
 		for s in self.series:
@@ -69,40 +69,52 @@ class Domain ():
 	def updateSerie (self, serieName):
 		self._updateSerie (serieName)
 
-	def _selectChapter (self, links):
-		possibleLinks = []
-		print ''
-		for i, l in enumerate(links):
-			stdout.write('   -> #' + str( i + 1 ) + ' - ')
+    def _selectChapter (self, links):
+        languages = self._ctrlDisk.getLanguages ()
+        it = 0
+        possibleLinks = []
 
-			if 'Spanish' in l.getLanguage ():
-				if 'streamcloud' in l.getHost ().lower () or \
-				   'nowvideo' in l.getHost ().lower () or \
-				   'streamin' in l.getHost ().lower () or \
-				   'streamplay' in l.getHost ().lower ():
-					possibleLinks.append(l)
-			l.printLink ()
+        while len(possibleLinks) == 0:
 
-		if len(possibleLinks) > 1:
-			rand = randint (0, len(possibleLinks)-1)
-			for j, l in enumerate(links):
-				if l.getURL () in possibleLinks [rand].getURL ():
-					print ''
-					print '  -> link #' + str( j + 1 ) + ' automatically selected'
-					return possibleLinks [rand]
+            print ''
+            for i, l in enumerate(links):
+                stdout.write('   -> #' + str( i + 1 ) + ' - ')
 
-		else:
-			print ''
-			print '  -> can\'t select a link automatically'
-			read = readInt ('which download? [1-' + str (len (links)) + ']')
-			print ''
+                print languages [it][0]
+                print languages [it][1]
+                print '-------------------'
+                print l.getLanguage ()
+                print l.getSubtitles ()
+                if  languages [it][0] in l.getLanguage () and languages [it][1] == l.getSubtitles ():
+    				if 'streamcloud' in l.getHost ().lower () or \
+    				   'nowvideo' in l.getHost ().lower () or \
+    				   'streamin' in l.getHost ().lower () or \
+    				   'streamplay' in l.getHost ().lower ():
+    					possibleLinks.append(l)
+                l.printLink ()
 
-			while read > len (links) -1 or read <1:
-				print '  -> "' + str(read) + '" is not valid  number'
-				read = readInt ('which download? [1-' + str (len (links)) + ']') - 1
-				print ''
+            if len(possibleLinks) > 1:
+                rand = randint (0, len(possibleLinks)-1)
+                for j, l in enumerate(links):
+                    if l.getURL () in possibleLinks [rand].getURL ():
+                        print ''
+                        print '  -> link #' + str( j + 1 ) + ' automatically selected'
+                        return possibleLinks [rand]
 
-			return links [read - 1]
+            elif (it < len (languages)):
+                it += 1
+            else:
+    			print ''
+    			print '  -> can\'t select a link automatically'
+    			read = readInt ('which download? [1-' + str (len (links)) + ']')
+    			print ''
+
+    			while read > len (links) -1 or read <1:
+    				print '  -> "' + str(read) + '" is not valid  number'
+    				read = readInt ('which download? [1-' + str (len (links)) + ']') - 1
+    				print ''
+
+    			return links [read - 1]
 
 	def _buildName (self, serie, seasonNumber, chapterNumber):
 		name = ''

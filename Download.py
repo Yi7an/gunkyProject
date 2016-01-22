@@ -5,6 +5,9 @@ import requests
 
 class Download ():
 
+    def __init (self, tmpPath):
+        self.TMP_PATH = tmpPath
+
     def downloadVideoFile (self, videoLink, name):
         r = requests.get (videoLink, stream = True)
         totalLength = float (r.headers.get ('content-length'))
@@ -18,7 +21,7 @@ class Download ():
         downloaded = float (0)
         progress = 1
         if r.status_code == 200:
-            with open ('./tmp-dl/' + name, 'wb') as f:
+            with open (self.TMP_PATH + '/' + name, 'wb') as f:
                 for chunk in r:
                     f.write (chunk)
                     downloaded += len (chunk)
