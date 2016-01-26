@@ -18,41 +18,41 @@ def showInfo ():
 
 def main ():
 
-	domain = Domain ()
-	showInfo ()
-	read = readString('')
+    domain = Domain ()
+    showInfo ()
+    read = readString('')
 
-	while read != 'quit':
+    while read != 'quit':
 
-		if read == 'help':
-			showInfo ()
-		elif read == 'view':
-			serieName = readString ('serie name')
-			domain.viewSerie (serieName)
+        if read == 'help':
+            showInfo ()
+        elif read == 'view':
+            serieName = readString ('serie name')
+            domain.viewSerie (serieName)
 
-		elif read == 'update':
-			serieName = readString ('serie name')
-			domain.updateSerie (serieName)
+        elif read == 'update':
+            serieName = readString ('serie name')
+            domain.updateSerie (serieName)
 
-		elif read == 'download':
-			serieName = readString ('serie name')
-			seasonNumber = readInt ('season')
-			chapterNumber = readInt ('chapter number')
-			domain.downloadChapter (serieName, seasonNumber, chapterNumber)
+        elif read == 'download':
+            serieName = readString ('serie name')
+            seasonNumber = readInt ('season')
+            chapterNumber = readInt ('chapter number')
+            domain.downloadChapter (serieName, seasonNumber, chapterNumber)
 
-		elif read == 'download-next':
-			serieName = readString ('serie name')
-			domain.downloadNext (serieName)
+        elif read == 'download-next':
+            serieName = readString ('serie name')
+            domain.downloadNext (serieName)
 
-		elif read == 'download-season':
-			serieName = readString('serie name')
-			seasonNumber = readInt('season')
-			domain.downloadSeason (serieName, seasonNumber)
+        elif read == 'download-season':
+            serieName = readString('serie name')
+            seasonNumber = readInt('season')
+            domain.downloadSeason (serieName, seasonNumber)
 
-		else:
-			print ' -> option "' + read + '" doesn\'t exist'
+        else:
+            print ' -> option "' + read + '" doesn\'t exist'
 
-		stdout.write ('  <- ')
-		read = readString ('')
+        stdout.write ('  <- ')
+        read = readString ('')
 
 main ()

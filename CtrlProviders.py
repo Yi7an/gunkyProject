@@ -27,85 +27,85 @@ class CtrlProviders ():
         self._linksProviderSeriesPepito = LinksProviderSeriesPepito ()
         self._linksProviderSeriesAdicto = LinksProviderSeriesAdicto ()
 
-	def downloadVideo (self, url, host, name):
-		if 'streamcloud' in host.lower():
-			d = DownloadStreamCloud ()
-			downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
+    def downloadVideo (self, url, host, name):
+        if 'streamcloud' in host.lower():
+            d = DownloadStreamCloud ()
+            downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
 
-		elif 'nowvideo' in host.lower():
-			d = DownloadNowVideo ()
-			downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
+        elif 'nowvideo' in host.lower():
+            d = DownloadNowVideo ()
+            downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
 
-		elif 'streamin' in host.lower():
-			d =  DownloadStreamin ()
-			downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
-		elif 'streamplay' in host.lower():
-			d =  DownloadStreamPlay ()
-			downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
-		else:
-			print '  -> host "' + host + '" not defined for download'
+        elif 'streamin' in host.lower():
+            d =  DownloadStreamin ()
+            downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
+        elif 'streamplay' in host.lower():
+            d =  DownloadStreamPlay ()
+            downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
+        else:
+            print '  -> host "' + host + '" not defined for download'
 
-	def loadSerie (self, serieName):
-		data = self._infoProviderImdb.loadSerie (serieName)
-		if data == None:
+    def loadSerie (self, serieName):
+        data = self._infoProviderImdb.loadSerie (serieName)
+        if data == None:
 			#data = self._infoProviderAnime.loadSerie (serieName)
 			#if data == None:
 				#...
-			raise Exception ('Serie "' + serieName + '" not found')
-		return data
+            raise Exception ('Serie "' + serieName + '" not found')
+        return data
 
-	def printSuggerencies (self):
-		print ''
-		print ' -> suggerencies:'
-		self._infoProviderImdb.printSuggerencies ()
-		#self._infoProviderAnime.printSuggerencies ()
-		print ''
+    def printSuggerencies (self):
+        print ''
+        print ' -> suggerencies:'
+        self._infoProviderImdb.printSuggerencies ()
+        #self._infoProviderAnime.printSuggerencies ()
+        print ''
 
-	def getMainInfo (self, serieName):
-		mainPages = []
-		try:
-			mainPages.append (self._linkProviderSeriesFlv.getMainPageLink (serieName))
-		except Exception as e:
-			pass
+    def getMainInfo (self, serieName):
+        mainPages = []
+        try:
+            mainPages.append (self._linkProviderSeriesFlv.getMainPageLink (serieName))
+        except Exception as e:
+            pass
 			#print str(e)
-		try:
-			mainPages.append (self._linksProviderSeriesPepito.getMainPageLink (serieName))
-		except Exception as e:
-			pass
+        try:
+            mainPages.append (self._linksProviderSeriesPepito.getMainPageLink (serieName))
+        except Exception as e:
+            pass
 			#print str(e)
-		try:
-			mainPages.append (self._linksProviderSeriesAdicto.getMainPageLink (serieName))
-		except Exception as e:
-			pass
-			#print str(e)
+        try:
+            mainPages.append (self._linksProviderSeriesAdicto.getMainPageLink (serieName))
+        except Exception as e:
+            pass
+            #print str(e)
 
-		return mainPages
+        return mainPages
 
-	def getChapterUrls (self, mainPagesLinks, seasonNumber, chapterNumber):
-		data = []
-		#print ''
-		for mainPage in mainPagesLinks:
+    def getChapterUrls (self, mainPagesLinks, seasonNumber, chapterNumber):
+        data = []
+        #print ''
+        for mainPage in mainPagesLinks:
 
-			if 'seriesflv' in mainPage:
-				try:
-					chapterUrls = self._linkProviderSeriesFlv.getChapterUrls (mainPage, seasonNumber, chapterNumber)
-					data += chapterUrls
-				except Exception as e:
-					pass
+            if 'seriesflv' in mainPage:
+                try:
+                    chapterUrls = self._linkProviderSeriesFlv.getChapterUrls (mainPage, seasonNumber, chapterNumber)
+                    data += chapterUrls
+                except Exception as e:
+                    pass
 					#print '  -> error retrieving chapters from seriesFlv'
-			elif 'seriespepito' in mainPage:
-				try:
-					chapterUrls = self._linksProviderSeriesPepito.getChapterUrls (mainPage, seasonNumber, chapterNumber)
-					data += chapterUrls
-				except Exception as e:
-					pass
+            elif 'seriespepito' in mainPage:
+                try:
+                    chapterUrls = self._linksProviderSeriesPepito.getChapterUrls (mainPage, seasonNumber, chapterNumber)
+                    data += chapterUrls
+                except Exception as e:
+                    pass
 					#print '  -> error retrieving chapters from seriesPepito'
-			elif 'seriesadicto' in mainPage:
-				try:
-					chapterUrls = self._linksProviderSeriesAdicto.getChapterUrls (mainPage, seasonNumber, chapterNumber)
-					data += chapterUrls
-				except Exception as e:
-					pass
+            elif 'seriesadicto' in mainPage:
+                try:
+                    chapterUrls = self._linksProviderSeriesAdicto.getChapterUrls (mainPage, seasonNumber, chapterNumber)
+                    data += chapterUrls
+                except Exception as e:
+                    pass
 					#print '  -> error retrieving chapters from seriesAdicto'
 
-		return data
+            return data

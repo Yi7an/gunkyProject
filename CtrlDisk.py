@@ -80,41 +80,38 @@ class CtrlDisk ():
                     exit (1)
                 return
 
+    def moveFile (self, fromPath, toPath):
+        if not os.path.exists (self.SERIE_PATH + '/' + toPath):
+            os.makedirs (self.SERIE_PATH + '/' + toPath)
 
+        shutil.move (self.TMP_PATH + '/' + fromPath, self.SERIE_PATH + '/' + toPath)
 
+    def getLastChapter (self, serieName):
+        if not os.path.exists (self.SERIE_PATH + '/' + serieName):
+            os.makedirs (self.SERIE_PATH + '/' + serieName)
 
-	def moveFile (self, fromPath, toPath):
-		if not os.path.exists (self.SERIE_PATH + '/' + toPath):
-			os.makedirs (self.SERIE_PATH + '/' + toPath)
+        data = os.listdir (self.SERIE_PATH + '/' + serieName)
+        if len (data) == 0:
+            return None
+        return sorted (data) [len (data) -1]
 
-		shutil.move (tmpPath + fromPath, self.SERIE_PATH + '/' + toPath.replace ('?',''))
+    def getLastChapterBySeason (self, serieName, seasonNumber):
+        if not os.path.exists (self.SERIE_PATH + '/' + serieName):
+            os.makedirs (self.SERIE_PATH + '/' + serieName)
 
-	def getLastChapter (self, serieName):
-		if not os.path.exists (self.SERIE_PATH + '/' + serieName):
-			os.makedirs (self.SERIE_PATH + '/' + serieName)
+        data = os.listdir (self.SERIE_PATH + '/' + serieName)
 
-		data = os.listdir (self.SERIE_PATH + '/' + serieName)
-		if len (data) == 0:
-			return None
-		return sorted (data) [len (data) -1]
+        lastChapter = 0
+        seasonNumberStr = ''
 
-	def getLastChapterBySeason (self, serieName, seasonNumber):
-		if not os.path.exists (self.SERIE_PATH + '/' + serieName):
-			os.makedirs (self.SERIE_PATH + '/' + serieName)
+        if seasonNumber < 10:
+            seasonNumberStr = '0'
+        seasonNumberStr += str(seasonNumber)
 
-		data = os.listdir (self.SERIE_PATH + '/' + serieName)
-
-		lastChapter = 0
-		seasonNumberStr = ''
-
-		if seasonNumber < 10:
-			seasonNumberStr = '0'
-		seasonNumberStr += str(seasonNumber)
-
-		for d in sorted (data):
-			if seasonNumberStr + 'x' in d:
-				lastChapter = int (d [3:5])
-		return lastChapter
+        for d in sorted (data):
+            if seasonNumberStr + 'x' in d:
+                lastChapter = int (d [3:5])
+        return lastChapter
 
     def getSeries (self):
     	series = []
@@ -149,43 +146,43 @@ class CtrlDisk ():
     		pass
     	return series
 
-	def storeSerie (self, serie):
-		try:
-			self._cache = shelve.open ('cache.db', 'w')
-		except:
-			self._cache = shelve.open ('cache.db', 'n')
+    def storeSerie (self, serie):
+        try:
+            self._cache = shelve.open ('cache.db', 'w')
+        except:
+            self._cache = shelve.open ('cache.db', 'n')
 
-		serieName = serie.getName ()
-		description = serie.getDescription ()
-		mainPages = serie.getMainPageLinks ()
-		seasons = serie.getSeasons ()
+        serieName = serie.getName ()
+        description = serie.getDescription ()
+        mainPages = serie.getMainPageLinks ()
+        seasons = serie.getSeasons ()
 
-		data = []
-		data.append (serieName)
-		data.append (description)
-		data.append (mainPages)
+        data = []
+        data.append (serieName)
+        data.append (description)
+        data.append (mainPages)
 
-		if not self._cache.has_key ('seriesName'):
-			res = []
-			res.append (data)
+        if not self._cache.has_key ('seriesName'):
+            res = []
+            res.append (data)
 
-			self._cache ['seriesName'] = res
-			self._cache [serieName.encode ('utf-8')] = serie.getSeasons ()
+            self._cache ['seriesName'] = res
+            self._cache [serieName.encode ('utf-8')] = serie.getSeasons ()
 
-		else:
-			series = self._cache ['seriesName']
-			count = 0
-			found = False
-			while count < len (series):
-				if series [count] [0] == serieName and not found:
-					series [count] == data
-					self._cache [serieName.encode ('utf-8')] = serie.getSeasons ()
+        else:
+            series = self._cache ['seriesName']
+            count = 0
+            found = False
+            while count < len (series):
+                if series [count] [0] == serieName and not found:
+                    series [count] == data
+                    self._cache [serieName.encode ('utf-8')] = serie.getSeasons ()
 
-					found = True
-				count += 1
+                    found = True
+                count += 1
 
-			series.append (data)
-			self._cache ['seriesName'] = series
-			self._cache [serieName.encode ('utf-8')] = serie.getSeasons ()
+            series.append (data)
+            self._cache ['seriesName'] = series
+            self._cache [serieName.encode ('utf-8')] = serie.getSeasons ()
 
-		self._cache.close ()
+        self._cache.close ()

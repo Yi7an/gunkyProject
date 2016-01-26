@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from sys import stdout, stdin
+from sys import stdout, stdin, exit
 import requests
 
 def isNumber(s):
@@ -24,6 +24,8 @@ def readString (text):
                 stdout.write ('  -> ' + text + ': ')
         while input_var != 'q':
                 input_var = stdin.readline().split("\n")[0]
+                if input_var.strip() == 'q':
+                    exit (0)
                 return input_var.strip()
 
 def readInt (text):

@@ -26,4 +26,4 @@ class DownloadNowVideo (Download):
                 self.downloadVideoFile (s.attrs['src'][0], name)
                 return
             except Exception as e:
-                pass
+                raise Exception (str(e))

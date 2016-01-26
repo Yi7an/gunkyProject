@@ -48,7 +48,6 @@ class LinksProviderSeriesPepito (LinksProvider):
                     driver.quit()
                     display.stop()
                     raise Exception ('  -> Serie not found in SeriesPepito')
-        print 'puta calle'
 
     def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber):
         r = requests.get (serieUrl, headers={ "user-agent": "Mozilla/5.0" })
