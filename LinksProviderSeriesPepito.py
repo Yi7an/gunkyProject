@@ -19,6 +19,8 @@ class LinksProviderSeriesPepito (LinksProvider):
     def getMainPageLink (self, serieName):
         if serieName == 'house m.d.':
             serieName = 'house, m.d.'
+        elif serieName == 'sons of anarchy':
+            serieName = 'hijos de la anarquia'
 
         display = Display(visible=0, size=(800, 600))
         display.start()
