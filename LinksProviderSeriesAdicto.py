@@ -15,8 +15,6 @@ class LinksProviderSeriesAdicto (LinksProvider):
     def getMainPageLink (self, serieName):
         if serieName == 'house m.d.':
             serieName = 'house, m.d.'
-        elif serieName == 'sons of anarchy':
-            serieName = 'hijos de la anarquia'
         
         url = self._URL + 'buscar/' + serieName.replace(' ', '%20')
         r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
