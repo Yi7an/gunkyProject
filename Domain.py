@@ -52,7 +52,7 @@ class Domain ():
 
         if found:
             self.series.pop (it)
-            
+
         self.series.append (serie)
         self._ctrlDisk.storeSerie (serie)
 
@@ -183,7 +183,6 @@ class Domain ():
 
                             downloadErr = False
                         except Exception as e:
-                            print e
                             print '  -> error downloading chapter "' + name + '"'
                             iterator = 0
                             deleted = False
@@ -196,8 +195,6 @@ class Domain ():
                                     self._ctrlDisk.storeSerie (serie)
                                     deleted = True
                                 iterator += 1
-                    else:
-					print '  -> no links found, skipping chapter '
             else:
 				print ''
 				print ' -> chapter number ' + str(chapterNumber) + ' doesn\'t exist'
