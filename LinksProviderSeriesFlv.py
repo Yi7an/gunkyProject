@@ -25,10 +25,10 @@ class LinksProviderSeriesFlv (LinksProvider):
             raise Exception ('  -> error getting serie from SeriesFlv')
 
 
-        if 'is currently offline' in r.text:
+        if 'is currently offline' in r.text.encode('utf-8'):
             raise Exception (' -> web SeriesFlv offline')
         _parser = Parser ()
-        data = _parser.feed (r.text)
+        data = _parser.feed (r.text.encode('utf-8'))
 
         if len (data.get_by (tag = 'a')) < 1:
             raise Exception ('  -> serie "' + serieName + '" not found in SeriesFlv')
@@ -42,7 +42,7 @@ class LinksProviderSeriesFlv (LinksProvider):
             raise Exception ('  -> error getting serie from SeriesFlv')
 
         _parser = Parser ()
-        data = _parser.feed (r.text)
+        data = _parser.feed (r.text.encode('utf-8'))
         td = data.get_by (tag = 'td', clazz = 'sape')
 
         cNumber = ''
@@ -57,7 +57,7 @@ class LinksProviderSeriesFlv (LinksProvider):
                 found = True
                 url = str(t.get_childs()[1].attrs['href'][0])
                 r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
-                data = _parser.feed (r.text)
+                data = _parser.feed (r.text.encode('utf-8'))
 
                 tbody = data.get_by (tag = 'tbody')[0]
                 for tr in tbody.get_childs ():
@@ -85,7 +85,7 @@ class LinksProviderSeriesFlv (LinksProvider):
                     l.setHost (host)
 
                     r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
-                    data = _parser.feed (r.text)
+                    data = _parser.feed (r.text.encode('utf-8'))
                     l.setURL (str(data.get_by (tag = 'meta')[0].attrs['content'][0].split('=')[1]))
 
                     itemFound = False

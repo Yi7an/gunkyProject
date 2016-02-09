@@ -37,7 +37,7 @@ class LinksProviderSeriesPepito (LinksProvider):
             try:
                 _parser = Parser ()
                 li = driver.find_element_by_class_name ('ui-menu-item')
-                data = _parser.feed(str(li.get_attribute('innerHTML')))
+                data = _parser.feed(str(li.get_attribute('innerHTML').encode('utf-8')))
                 menuItemFound = True
                 driver.quit()
                 display.stop()
