@@ -83,7 +83,6 @@ class CtrlProviders ():
 
     def getChapterUrls (self, mainPagesLinks, seasonNumber, chapterNumber):
         data = []
-        #print ''
         for mainPage in mainPagesLinks:
 
             if 'seriesflv' in mainPage:

@@ -23,7 +23,7 @@ class LinksProviderSeriesAdicto (LinksProvider):
             raise Exception ('  -> error getting serie from SeriesFlv')
 
         _parser = Parser ()
-        data = _parser.feed (r.text.encode('utf-8'))
+        data = _parser.feed (r.text)
 
         clazz = data.get_by (clazz = 'col-xs-6 col-sm-4 col-md-2')
         if len (clazz) != 1:
@@ -38,7 +38,7 @@ class LinksProviderSeriesAdicto (LinksProvider):
             raise Exception ('  -> error getting serie from SeriesFlv')
 
         _parser = Parser ()
-        data = _parser.feed (r.text.encode('utf-8'))
+        data = _parser.feed (r.text)
         td = data.get_by (tag = 'td', clazz = 'sape')
 
         cNumber = ''
@@ -51,7 +51,7 @@ class LinksProviderSeriesAdicto (LinksProvider):
                 url = self._URL + str(t.get_childs()[1].attrs['href'][0])
 
                 r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
-                data = _parser.feed (r.text.encode('utf-8'))
+                data = _parser.feed (r.text)
 
                 tbody = data.get_by (tag = 'tbody')[0]
                 for tr in tbody.get_childs ():
