@@ -107,4 +107,4 @@ class CtrlProviders ():
                     pass
 					#print '  -> error retrieving chapters from seriesAdicto'
 
-            return data
+        return data
