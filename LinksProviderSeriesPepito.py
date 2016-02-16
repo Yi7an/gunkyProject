@@ -3,20 +3,19 @@
 
 from pyvirtualdisplay import Display
 from selenium import webdriver
+from LinksProvider import LinksProvider
 import requests
 import time
 
-from LinksProvider import LinksProvider
 from Parser import Parser
 from Season import Link
 
-class LinksProviderSeriesPepito (LinksProvider):
+class LinksProviderSeriesPepito(LinksProvider):
 
     def __init__ (self):
-        self._URL = 'http://www.seriespepito.to/'
-        LinksProvider.__init__ (self, 'SeriesPepito')
+        super(LinksProviderSeriesPepito, self).__init__('seriespepito', 'http://www.seriespepito.to/')
 
-    def getMainPageLink (self, serieName):
+    def getMainPageLink (self, serieName, q):
         if serieName == 'house m.d.':
             serieName = 'house, m.d.'
         elif serieName == 'sons of anarchy':
@@ -41,7 +40,7 @@ class LinksProviderSeriesPepito (LinksProvider):
                 menuItemFound = True
                 driver.quit()
                 display.stop()
-                return data.get_childs()[0].attrs['href'][0]
+                q.put((self._name, data.get_childs()[0].attrs['href'][0]))
 
             except Exception as e:
                 time.sleep (1)
@@ -51,7 +50,7 @@ class LinksProviderSeriesPepito (LinksProvider):
                     display.stop()
                     raise Exception ('  -> Serie not found in SeriesPepito')
 
-    def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber):
+    def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber, q):
         r = requests.get (serieUrl, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
@@ -75,6 +74,8 @@ class LinksProviderSeriesPepito (LinksProvider):
 
                 for tr in tbody.get_childs ():
                     l = Link ()
+
+                    l.setProviderName (self._name)
 
                     langFlagUrl = str (tr.get_childs ()[0].get_childs()[0].attrs['src'][0])
                     langFlagImg = langFlagUrl.split ('/') [len (langFlagUrl.split ('/')) -1]
@@ -106,4 +107,5 @@ class LinksProviderSeriesPepito (LinksProvider):
                     if not itemFound:
                         chapterUrlArray.append (l)
 
-        return chapterUrlArray
+        for elem in chapterUrlArray:
+            q.put((self._name,elem))

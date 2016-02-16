@@ -96,7 +96,37 @@ class Serie ():
 	def printChapter (self, seasonNumber, chapterNumber):
 		self._seasons [seasonNumber-1].getChapters ()[chapterNumber-1].printChapter ()
 
+	def toJson (self):
+			d = {}
+			d ['serieName'] = self._name
+			d ['description'] = self._description
+			d ['mainPageLinks'] = self._mainPageLinks
+			d ['seasons'] = []
+
+			for s in self._seasons:
+				season = []
+				for c in s._chapters:
+					chap = {}
+					chap ['chapterName'] = c.getName ()
+					chap ['releaseDate'] = c.getReleaseDate ()
+					chap ['links'] = []
+
+					for l in c.getLinkArray ():
+						link = {}
+						link ['url'] = l.getURL ()
+						link ['host'] = l.getHost ()
+						link ['language'] = l.getLanguage ()
+						link ['subtitles'] = l.getSubtitles ()
+						link ['providerName'] = l.getProviderName ()
+
+						chap['links'].append (link)
+					season.append (chap)
+				d ['seasons'].append (season)
+
+			return d
+
 	def printSerie (self):
+
 		print ''
 		print ' -> name: ' + self._name
 		print ' -> description: ' + self._description

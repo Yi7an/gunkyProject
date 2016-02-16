@@ -6,13 +6,12 @@ from LinksProvider import LinksProvider
 from Parser import Parser
 from Season import Link
 
-class LinksProviderSeriesAdicto (LinksProvider):
+class LinksProviderSeriesAdicto(LinksProvider):
 
     def __init__ (self):
-        self._URL = 'http://seriesadicto.com/'
-        LinksProvider.__init__ (self, 'SeriesAdicto')
+        super(LinksProviderSeriesAdicto, self).__init__('seriesadicto', 'http://seriesadicto.com/')
 
-    def getMainPageLink (self, serieName):
+    def getMainPageLink (self, serieName, q):
         if serieName == 'house m.d.':
             serieName = 'house, m.d.'
 
@@ -20,22 +19,22 @@ class LinksProviderSeriesAdicto (LinksProvider):
         r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
-            raise Exception ('  -> error getting serie from SeriesFlv')
+            raise Exception ('  -> error getting serie from SeriesAdicto')
 
         _parser = Parser ()
         data = _parser.feed (r.text)
 
         clazz = data.get_by (clazz = 'col-xs-6 col-sm-4 col-md-2')
         if len (clazz) != 1:
-            raise Exception ('  -> serie "' + serieName + '" not found in SeriesFlv')
+            raise Exception ('  -> serie "' + serieName + '" not found in SeriesAdicto')
 
-        return self._URL[:-1] + str(clazz[0].get_childs()[0].attrs['href'][0])
+        q.put((self._name, self._URL[:-1] + str(clazz[0].get_childs()[0].attrs['href'][0])))
 
-    def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber):
+    def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber, q):
         r = requests.get (serieUrl, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
-            raise Exception ('  -> error getting serie from SeriesFlv')
+            raise Exception ('  -> error getting serie from SeriesAdicto')
 
         _parser = Parser ()
         data = _parser.feed (r.text)
@@ -46,7 +45,7 @@ class LinksProviderSeriesAdicto (LinksProvider):
 
         chapterUrlArray = []
         for t in td:
-            if not found and '/' + str(seasonNumber) + '/' + str(chapterNumber) in str(t.get_childs()[1].attrs['href'][0]):
+            if not found and len (t.get_childs()) > 1 and '/' + str(seasonNumber) + '/' + str(chapterNumber) in str(t.get_childs()[1].attrs['href'][0]):
                 found = True
                 url = self._URL + str(t.get_childs()[1].attrs['href'][0])
 
@@ -56,6 +55,8 @@ class LinksProviderSeriesAdicto (LinksProvider):
                 tbody = data.get_by (tag = 'tbody')[0]
                 for tr in tbody.get_childs ():
                     l = Link ()
+
+                    l.setProviderName (self._name)
 
                     langFlagUrl = str (tr.get_childs ()[0].get_childs()[0].attrs['src'][0])
                     langFlagImg = langFlagUrl.split ('/') [len (langFlagUrl.split ('/')) -1]
@@ -84,4 +85,5 @@ class LinksProviderSeriesAdicto (LinksProvider):
                     if not itemFound:
                         chapterUrlArray.append (l)
 
-        return chapterUrlArray
+        for elem in chapterUrlArray:
+            q.put((self._name, elem))

@@ -7,6 +7,7 @@ class Link ():
         self._host = ''
         self._language = ''
         self._subtitles = ''
+        self._providerName = ''
 
     def getURL (self):
         return self._URL
@@ -23,6 +24,9 @@ class Link ():
     def getHost (self):
         return self._host
 
+    def getProviderName (self):
+        return self._providerName
+
     def setURL (self, url):
         self._URL = url
 
@@ -34,6 +38,9 @@ class Link ():
 
     def setSubtitles (self, subtitles):
         self._subtitles = subtitles
+
+    def setProviderName (self, providerName):
+        self._providerName = providerName
 
     def printLink (self):
         if self._subtitles == '':

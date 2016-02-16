@@ -15,17 +15,18 @@ from LinksProviderSeriesAdicto import LinksProviderSeriesAdicto
 from Season import Link
 from Tools import isNumber
 
-class CtrlProviders ():
+from threading import Thread
+from Queue import Queue
+
+class CtrlProviders():
 
     def __init__ (self, tmpPath):
 
         self.TMP_PATH = tmpPath
-
         self._infoProviderImdb = InfoProviderImdb ()
 
-        self._linkProviderSeriesFlv = LinksProviderSeriesFlv ()
-        self._linksProviderSeriesPepito = LinksProviderSeriesPepito ()
-        self._linksProviderSeriesAdicto = LinksProviderSeriesAdicto ()
+        #self._linkProviders = [LinksProviderSeriesAdicto(), LinksProviderSeriesFlv(), LinksProviderSeriesPepito()]
+        self._linkProviders = [LinksProviderSeriesAdicto(), LinksProviderSeriesPepito()]
 
     def downloadVideo (self, url, host, name):
         if 'streamcloud' in host.lower():
@@ -62,49 +63,38 @@ class CtrlProviders ():
         print ''
 
     def getMainInfo (self, serieName):
+        q = Queue()
+
+        threads = []
+
+        for linkProvider in self._linkProviders:
+            threads.append(Thread(target=linkProvider.getMainPageLink, args=(serieName, q)))
+
+        for thread in threads: thread.start()
+        for thread in threads: thread.join()
+
         mainPages = []
-        try:
-            mainPages.append (self._linkProviderSeriesFlv.getMainPageLink (serieName))
-        except Exception as e:
-            pass
-			#print str(e)
-        try:
-            mainPages.append (self._linksProviderSeriesPepito.getMainPageLink (serieName))
-        except Exception as e:
-            pass
-			#print str(e)
-        try:
-            mainPages.append (self._linksProviderSeriesAdicto.getMainPageLink (serieName))
-        except Exception as e:
-            pass
-            #print str(e)
+
+        while q.qsize() > 0:
+            mainPages.append(q.get())
 
         return mainPages
 
     def getChapterUrls (self, mainPagesLinks, seasonNumber, chapterNumber):
-        data = []
-        for mainPage in mainPagesLinks:
+        q = Queue()
 
-            if 'seriesflv' in mainPage:
-                try:
-                    chapterUrls = self._linkProviderSeriesFlv.getChapterUrls (mainPage, seasonNumber, chapterNumber)
-                    data += chapterUrls
-                except Exception as e:
-                    pass
-					#print '  -> error retrieving chapters from seriesFlv'
-            elif 'seriespepito' in mainPage:
-                try:
-                    chapterUrls = self._linksProviderSeriesPepito.getChapterUrls (mainPage, seasonNumber, chapterNumber)
-                    data += chapterUrls
-                except Exception as e:
-                    pass
-					#print '  -> error retrieving chapters from seriesPepito'
-            elif 'seriesadicto' in mainPage:
-                try:
-                    chapterUrls = self._linksProviderSeriesAdicto.getChapterUrls (mainPage, seasonNumber, chapterNumber)
-                    data += chapterUrls
-                except Exception as e:
-                    pass
-					#print '  -> error retrieving chapters from seriesAdicto'
+        threads = []
+
+        for mainPage, linkProvider in [(x[1], y) for x in mainPagesLinks for y in self._linkProviders if x[0] == y._name]:
+            threads.append(Thread(target=linkProvider.getChapterUrls, args=(mainPage, seasonNumber, chapterNumber, q)))
+
+        for thread in threads: thread.start()
+        for thread in threads: thread.join()
+
+        data = []
+
+        while q.qsize() > 0:
+            data.append(q.get()[1])
+
 
         return data

@@ -1,10 +1,12 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-class LinksProvider ():
+class LinksProvider(object):
 
-    def __init__ (self, name):
+    def __init__ (self, name, url=None):
+        self._URL = url
         self._name = name
 
-    def getName (self):
-        return self._name
+    def getMainPageLink (self, serieName, q):
+        raise NotImplementedError()
+
+    def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber, q):
+        raise NotImplementedError()
