@@ -21,8 +21,8 @@ class LinksProviderSeriesPepito(LinksProvider):
         elif serieName == 'sons of anarchy':
             serieName = 'hijos de la anarquia'
 
-        display = Display(visible=0, size=(800, 600))
-        display.start()
+        display = Display (visible=0, size=(800, 600))
+        display.start ()
 
         driver = webdriver.Firefox()
         driver.set_page_load_timeout(60)

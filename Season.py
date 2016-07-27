@@ -44,9 +44,9 @@ class Link ():
 
     def printLink (self):
         if self._subtitles == '':
-            print self._host + ' (' + self._language + ')'
+            print self._host + ' (' + self._language + ') ' + self._providerName
         else:
-            print self._host + ' (' + self._language + ') [Sub. ' + self._subtitles + ']'
+            print self._host + ' (' + self._language + ') [Sub. ' + self._subtitles + '] ' + self._providerName
 
 
 class Chapter ():

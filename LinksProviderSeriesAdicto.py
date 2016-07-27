@@ -25,8 +25,8 @@ class LinksProviderSeriesAdicto(LinksProvider):
         data = _parser.feed (r.text)
 
         clazz = data.get_by (clazz = 'col-xs-6 col-sm-4 col-md-2')
-        if len (clazz) != 1:
-            raise Exception ('  -> serie "' + serieName + '" not found in SeriesAdicto')
+        #if len (clazz) != 1:
+        #    raise Exception ('  -> serie "' + serieName + '" not found in SeriesAdicto')
 
         q.put((self._name, self._URL[:-1] + str(clazz[0].get_childs()[0].attrs['href'][0])))
 
