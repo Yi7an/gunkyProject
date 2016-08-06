@@ -38,7 +38,7 @@ class CtrlProviders():
             d = DownloadNowVideo ()
             downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
 
-        elif 'streamin' in host.lower():
+        elif 'streamin' in host.lower() or 'streaminto' in host.lower():
             d =  DownloadStreamin ()
             downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
         elif 'streamplay' in host.lower():
