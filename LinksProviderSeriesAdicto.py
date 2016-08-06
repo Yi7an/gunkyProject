@@ -3,7 +3,10 @@
 
 import requests
 from LinksProvider import LinksProvider
+
 from Parser import Parser
+from Tools import isValidHost
+
 from Season import Link
 
 class LinksProviderSeriesAdicto(LinksProvider):
@@ -54,36 +57,39 @@ class LinksProviderSeriesAdicto(LinksProvider):
 
                 tbody = data.get_by (tag = 'tbody')[0]
                 for tr in tbody.get_childs ():
-                    l = Link ()
-
-                    l.setProviderName (self._name)
-
-                    langFlagUrl = str (tr.get_childs ()[0].get_childs()[0].attrs['src'][0])
-                    langFlagImg = langFlagUrl.split ('/') [len (langFlagUrl.split ('/')) -1]
-
-                    if '1.' in langFlagImg:
-                        l.setLanguage ('Spanish')
-                    elif '2.' in langFlagImg:
-                        l.setLanguage ('Latin')
-                    elif '3.' in langFlagImg:
-                        l.setLanguage ('English')
-                        l.setSubtitles ('Spanish')
-                    elif '4.' in langFlagImg:
-                        l.setLanguage ('English')
 
                     host = str (tr.get_childs ()[1].data[0]).lower ()
-                    url = str (tr.get_childs ()[2].get_childs()[0].attrs['href'][0])
 
-                    l.setHost (host)
-                    l.setURL (url)
+                    if isValidHost (host):
+                        url = str (tr.get_childs ()[2].get_childs()[0].attrs['href'][0])
 
-                    itemFound = False
-                    for item in chapterUrlArray:
-                        if str(item.getURL ()) == str(l.getURL ()):
-                            itemFound = True
+                        langFlagUrl = str (tr.get_childs ()[0].get_childs()[0].attrs['src'][0])
+                        langFlagImg = langFlagUrl.split ('/') [len (langFlagUrl.split ('/')) -1]
 
-                    if not itemFound:
-                        chapterUrlArray.append (l)
+                        l = Link ()
+
+                        if '1.' in langFlagImg:
+                            l.setLanguage ('Spanish')
+                        elif '2.' in langFlagImg:
+                            l.setLanguage ('Latin')
+                        elif '3.' in langFlagImg:
+                            l.setLanguage ('English')
+                            l.setSubtitles ('Spanish')
+                        elif '4.' in langFlagImg:
+                            l.setLanguage ('English')
+
+                        l.setProviderName (self._name)
+
+                        l.setHost (host)
+                        l.setURL (url)
+
+                        itemFound = False
+                        for item in chapterUrlArray:
+                            if str(item.getURL ()) == str(l.getURL ()):
+                                itemFound = True
+
+                        if not itemFound:
+                            chapterUrlArray.append (l)
 
         for elem in chapterUrlArray:
             q.put((self._name, elem))

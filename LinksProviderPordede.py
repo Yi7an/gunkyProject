@@ -8,8 +8,9 @@ import requests
 import time
 
 from Parser import Parser
+from Tools import isValidHost
+
 from Season import Link
-from Queue import Queue
 
 class LinksProviderPordede(LinksProvider):
 
@@ -116,48 +117,53 @@ class LinksProviderPordede(LinksProvider):
 
         for cl in chapterLinks:
             try:
-                l = Link ()
+
                 childs = cl.get_childs()[0].get_childs()
                 host = str(childs[0].get_childs()[0].attrs['src'][0].split ('_')[1].split('.')[0])
 
-                l.setProviderName (self._name)
+                if isValidHost (host):
+                    flags = childs[1].get_by (tag = 'div')
 
-                flags = childs[1].get_by (tag = 'div')
+                    l = Link ()
 
-                if 'spanish' in flags[0].attrs['class'][0]:
-                    if 'LAT' in flags[0].attrs['data'][0]:
-                        l.setLanguage ("Latin")
-                    else:
-                        l.setLanguage ("Spanish")
-                elif 'english' in flags[0].attrs['class'][0]:
-                    l.setLanguage ('English')
+                    l.setProviderName (self._name)
 
-                if (len (flags) == 2):
-                    if 'spanish' in flags[1].attrs['class'][0]:
-                        l.setSubtitles ('Spanish')
-                    else:
-                        l.setSubtitles ('English')
+                    if 'spanish' in flags[0].attrs['class'][0]:
+                        if 'LAT' in flags[0].attrs['data'][0]:
+                            l.setLanguage ("Latin")
+                        else:
+                            l.setLanguage ("Spanish")
+                    elif 'english' in flags[0].attrs['class'][0]:
+                        l.setLanguage ('English')
+
+                    if (len (flags) == 2):
+                        if 'spanish' in flags[1].attrs['class'][0]:
+                            l.setSubtitles ('Spanish')
+                        else:
+                            l.setSubtitles ('English')
 
 
-                l.setHost (host)
+                    l.setHost (host)
 
-                url = str(self._URL[:-1] + cl.attrs['href'][0])
+                    url = str(self._URL[:-1] + cl.attrs['href'][0])
 
-                r = requests.get (url, cookies = cookies)
-                data = _parser.feed (r.text)
-                url = data.get_by (clazz = 'episodeText')[0].attrs['href'][0]
+                    r = requests.get (url, cookies = cookies)
+                    data = _parser.feed (r.text)
+                    url = data.get_by (clazz = 'episodeText')[0].attrs['href'][0]
 
-                r =  requests.get (self._URL[:-1] + url, cookies = cookies)
-                l.setURL (r.url)
+                    r =  requests.get (self._URL[:-1] + url, cookies = cookies)
+                    l.setURL (r.url)
 
-                itemFound = False
-                for item in chapterUrlArray:
-                    if str(item.getURL ()) == str(l.getURL ()):
-                        itemFound = True
+                    itemFound = False
+                    for item in chapterUrlArray:
+                        if str(item.getURL ()) == str(l.getURL ()):
+                            itemFound = True
 
-                if not itemFound:
-                    chapterUrlArray.append (l)
+                    if not itemFound:
+                        chapterUrlArray.append (l)
+
             except Exception as e:
+                print e
                 pass
 
         for elem in chapterUrlArray:

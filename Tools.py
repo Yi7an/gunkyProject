@@ -36,3 +36,11 @@ def readInt (text):
                 if not isNumber (num):
                         print ' -> "' + num + '" is not a number'
         return int(num)
+
+def isValidHost (host):
+	validHosts = ['streamcloud', 'nowvideo', 'streamplay', 'streamin', 'streaminto']
+
+	if host.lower() in validHosts:
+		return True
+
+	return False

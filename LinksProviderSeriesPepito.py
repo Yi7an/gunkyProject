@@ -8,6 +8,8 @@ import requests
 import time
 
 from Parser import Parser
+from Tools import isValidHost
+
 from Season import Link
 
 class LinksProviderSeriesPepito(LinksProvider):
@@ -73,39 +75,46 @@ class LinksProviderSeriesPepito(LinksProvider):
                 tbody = data.get_by (tag = 'tbody')[1]
 
                 for tr in tbody.get_childs ():
-                    l = Link ()
-
-                    l.setProviderName (self._name)
-
-                    langFlagUrl = str (tr.get_childs ()[0].get_childs()[0].attrs['src'][0])
-                    langFlagImg = langFlagUrl.split ('/') [len (langFlagUrl.split ('/')) -1]
-
-                    if 'es.' in langFlagImg:
-                        l.setLanguage ('Spanish')
-                    elif 'la.' in langFlagImg:
-                        l.setLanguage ('Latin')
-                    elif 'sub.' in langFlagImg:
-                        l.setLanguage ('English')
-                        l.setSubtitles ('Spanish')
-                    elif 'en.' in langFlagImg:
-                        l.setLanguage ('English')
 
                     host = str (tr.get_childs ()[2].get_childs()[0].data[0]).strip ().lower ()
-                    url = str (tr.get_childs ()[3].get_childs()[0].attrs['href'][0])
 
-                    l.setHost (host)
+                    if isValidHost (host):
+                        url = str (tr.get_childs ()[3].get_childs()[0].attrs['href'][0])
 
-                    r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
-                    data = _parser.feed (r.text)
-                    l.setURL (str(data.get_by (clazz = 'btn btn-mini enlace_link')[0].attrs['href'][0]))
+                        langFlagUrl = str (tr.get_childs ()[0].get_childs()[0].attrs['src'][0])
+                        langFlagImg = langFlagUrl.split ('/') [len (langFlagUrl.split ('/')) -1]
 
-                    itemFound = False
-                    for item in chapterUrlArray:
-                        if str(item.getURL ()) == str(l.getURL ()):
-                            itemFound = True
+                        l = Link ()
 
-                    if not itemFound:
-                        chapterUrlArray.append (l)
+                        l.setProviderName (self._name)
+
+
+
+                        if 'es.' in langFlagImg:
+                            l.setLanguage ('Spanish')
+                        elif 'la.' in langFlagImg:
+                            l.setLanguage ('Latin')
+                        elif 'sub.' in langFlagImg:
+                            l.setLanguage ('English')
+                            l.setSubtitles ('Spanish')
+                        elif 'en.' in langFlagImg:
+                            l.setLanguage ('English')
+
+
+
+                        l.setHost (host)
+
+                        r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
+                        data = _parser.feed (r.text)
+                        l.setURL (str(data.get_by (clazz = 'btn btn-mini enlace_link')[0].attrs['href'][0]))
+
+                        itemFound = False
+                        for item in chapterUrlArray:
+                            if str(item.getURL ()) == str(l.getURL ()):
+                                itemFound = True
+
+                        if not itemFound:
+                            chapterUrlArray.append (l)
 
         for elem in chapterUrlArray:
             q.put((self._name,elem))
