@@ -8,9 +8,10 @@ from DownloadStreamPlay import DownloadStreamPlay
 
 from InfoProviderImdb import InfoProviderImdb
 
-from LinksProviderSeriesFlv import LinksProviderSeriesFlv
+#from LinksProviderSeriesFlv import LinksProviderSeriesFlv
 from LinksProviderSeriesPepito import LinksProviderSeriesPepito
 from LinksProviderSeriesAdicto import LinksProviderSeriesAdicto
+from LinksProviderPordede import LinksProviderPordede
 
 from Season import Link
 from Tools import isNumber
@@ -26,7 +27,7 @@ class CtrlProviders():
         self._infoProviderImdb = InfoProviderImdb ()
 
         #self._linkProviders = [LinksProviderSeriesAdicto(), LinksProviderSeriesFlv(), LinksProviderSeriesPepito()]
-        self._linkProviders = [LinksProviderSeriesAdicto(), LinksProviderSeriesPepito()]
+        self._linkProviders = [LinksProviderPordede(), LinksProviderSeriesAdicto(), LinksProviderSeriesPepito()]
 
     def downloadVideo (self, url, host, name):
         if 'streamcloud' in host.lower():
