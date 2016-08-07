@@ -94,6 +94,7 @@ class Serie ():
 		return len (self._seasons [seasonNumber-1].getChapters ()) >= chapterNumber
 
 	def printChapter (self, seasonNumber, chapterNumber):
+		print '  -> number: ' + str (chapterNumber)
 		self._seasons [seasonNumber-1].getChapters ()[chapterNumber-1].printChapter ()
 
 	def toJson (self):

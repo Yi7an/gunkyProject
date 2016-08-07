@@ -22,7 +22,8 @@ class LinksProviderSeriesAdicto(LinksProvider):
         r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
-            raise Exception ('  -> error getting serie from SeriesAdicto')
+            return
+            #raise Exception ('  -> error getting serie from SeriesAdicto')
 
         _parser = Parser ()
         data = _parser.feed (r.text)
@@ -39,7 +40,8 @@ class LinksProviderSeriesAdicto(LinksProvider):
         r = requests.get (serieUrl, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
-            raise Exception ('  -> error getting serie from SeriesAdicto')
+            return
+            #raise Exception ('  -> error getting serie from SeriesAdicto')
 
         _parser = Parser ()
         data = _parser.feed (r.text)

@@ -28,7 +28,8 @@ class CtrlProviders():
         self._infoProviderImdb = InfoProviderImdb ()
 
         #self._linkProviders = [LinksProviderPordede(), LinksProviderSeriesAdicto(), LinksProviderSeriesFlv(), LinksProviderSeriesPepito()]
-        self._linkProviders = [LinksProviderPordede(), LinksProviderSeriesAdicto(), LinksProviderSeriesPepito()]
+        #self._linkProviders = [LinksProviderPordede(), LinksProviderSeriesAdicto(), LinksProviderSeriesPepito()]
+        self._linkProviders = [LinksProviderPordede(), LinksProviderSeriesPepito()]
 
     def downloadVideo (self, url, host, name):
         if 'streamcloud' in host.lower():

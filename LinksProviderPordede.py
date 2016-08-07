@@ -44,11 +44,12 @@ class LinksProviderPordede(LinksProvider):
                 found = True
             except Exception as e:
                 time.sleep (1)
-                tries = tries - 1
+                tries -= 1
                 if tries == 0:
                     driver.quit()
                     display.stop()
-                    raise Exception ('  -> Can\'t enter to SeriesPordede')
+                    return
+                    #raise Exception ('  -> Can\'t enter to SeriesPordede')
 
         driver.find_element_by_xpath("//form[@id='login-form']/button[1]").submit ()
 
@@ -61,17 +62,22 @@ class LinksProviderPordede(LinksProvider):
                 found = True
             except Exception as e:
                 time.sleep (1)
-                tries = tries - 1
+                tries -= 1
+                if tries == 0:
+                    driver.quit()
+                    display.stop()
+                    raise Exception ('  -> Can\'t enter to SeriesPordede')
 
         tries = 5
+        found = False
 
-        while found and tries > 0:
+        while not found and tries > 0:
             try:
                 elem = driver.find_element_by_class_name ('selected').find_element_by_class_name ('defaultLink').get_attribute ('href')
                 driver.quit()
                 display.stop()
                 q.put((self._name, elem))
-                tries = 0
+                found = True
             except Exception as e:
                 time.sleep (1)
                 tries = tries - 1
@@ -165,15 +171,14 @@ class LinksProviderPordede(LinksProvider):
         onlineLinks = data.get_by (clazz = 'linksPopup')[0].get_childs()[4]
         chapterLinks = onlineLinks.get_by (clazz = 'a aporteLink done')
 
-        chapterUrlArray = []
-
         i = 0
 
         numThreads = len (chapterLinks) // 4
+
         while (i < len (chapterLinks)):
 
             threads = []
-            j = 0
+
             for j in range (0, numThreads):
                 if i >= len (chapterLinks):
                     break
@@ -182,6 +187,6 @@ class LinksProviderPordede(LinksProvider):
                 i += 1
 
             for thread in threads: thread.start()
-            for thread in threads: thread.join()
+            for thread in threads: thread.join (5)
 
         #print '  -> Search finished in ' + str (self._name) + '...'

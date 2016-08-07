@@ -28,14 +28,16 @@ class LinksProviderSeriesPepito(LinksProvider):
 
         driver = webdriver.Firefox()
         driver.set_page_load_timeout(60)
-        driver.get(self._URL)
-
-        driver.find_element_by_name ('searchquery').send_keys(serieName)
 
         menuItemFound = False
-        tries = 5
+
+        tries = 10
         while not menuItemFound:
             try:
+
+                driver.get(self._URL)
+                driver.find_element_by_name ('searchquery').send_keys(serieName)
+                
                 _parser = Parser ()
                 li = driver.find_element_by_class_name ('ui-menu-item')
                 data = _parser.feed(str(li.get_attribute('innerHTML').encode('utf-8')))
@@ -50,7 +52,8 @@ class LinksProviderSeriesPepito(LinksProvider):
                 if tries == 0:
                     driver.quit()
                     display.stop()
-                    raise Exception ('  -> Serie not found in SeriesPepito')
+                    return
+                    #raise Exception ('  -> Serie not found in SeriesPepito')
 
     def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber, q):
         #print '  -> Searching chapters in ' + str (self._name) + '...'

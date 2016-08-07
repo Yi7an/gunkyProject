@@ -147,6 +147,7 @@ class Domain ():
 
         if serie.seasonExists (seasonNumber):
             if serie.chapterNumberExists (seasonNumber, chapterNumber):
+                print ''
                 serie.printChapter (seasonNumber, chapterNumber)
 
                 if len (serie.getSeasons ()[seasonNumber-1].getChapters ()[chapterNumber-1].getLinkArray ()) == 0:
