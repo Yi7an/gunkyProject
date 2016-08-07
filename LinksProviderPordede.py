@@ -173,8 +173,7 @@ class LinksProviderPordede(LinksProvider):
             for j in range (0, numThreads):
                 if i >= len (chapterLinks):
                     break
-
-                print i
+                    
                 threads.append (Thread (target=self.getLinkInfo, args= (chapterLinks[i], cookies, q)))
                 i += 1
 
