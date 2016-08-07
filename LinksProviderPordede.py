@@ -21,6 +21,10 @@ class LinksProviderPordede(LinksProvider):
         super(LinksProviderPordede, self).__init__('pordede', 'http://pordede.com/')
 
     def getMainPageLink (self, serieName, q):
+
+        if serieName.lower() == 'daredevil':
+            serieName = "marvel's daredevil"
+
         url = self._URL + 'site/login'
 
         display = Display (visible=0, size=(800, 600))
@@ -173,7 +177,7 @@ class LinksProviderPordede(LinksProvider):
             for j in range (0, numThreads):
                 if i >= len (chapterLinks):
                     break
-                    
+
                 threads.append (Thread (target=self.getLinkInfo, args= (chapterLinks[i], cookies, q)))
                 i += 1
 
