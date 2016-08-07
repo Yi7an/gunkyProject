@@ -34,6 +34,8 @@ class LinksProviderSeriesAdicto(LinksProvider):
         q.put((self._name, self._URL[:-1] + str(clazz[0].get_childs()[0].attrs['href'][0])))
 
     def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber, q):
+        #print '  -> Searching in ' + str (self._name) + '...'
+
         r = requests.get (serieUrl, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
@@ -90,6 +92,7 @@ class LinksProviderSeriesAdicto(LinksProvider):
 
                         if not itemFound:
                             chapterUrlArray.append (l)
+        #print '  -> Search finished in ' + str (self._name) + '...'
 
         for elem in chapterUrlArray:
             q.put((self._name, elem))

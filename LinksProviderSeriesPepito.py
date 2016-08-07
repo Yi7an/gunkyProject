@@ -53,6 +53,8 @@ class LinksProviderSeriesPepito(LinksProvider):
                     raise Exception ('  -> Serie not found in SeriesPepito')
 
     def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber, q):
+        #print '  -> Searching chapters in ' + str (self._name) + '...'
+
         r = requests.get (serieUrl, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
@@ -115,6 +117,7 @@ class LinksProviderSeriesPepito(LinksProvider):
 
                         if not itemFound:
                             chapterUrlArray.append (l)
+        #print '  -> Search finished in ' + str (self._name) + '...'
 
         for elem in chapterUrlArray:
             q.put((self._name,elem))

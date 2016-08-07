@@ -12,6 +12,9 @@ from Tools import isValidHost
 
 from Season import Link
 
+from threading import Thread
+#from Queue import Queue
+
 class LinksProviderPordede(LinksProvider):
 
     def __init__ (self):
@@ -73,20 +76,65 @@ class LinksProviderPordede(LinksProvider):
                     display.stop()
                     raise Exception ('  -> Serie not found in SeriesPordede')
 
-    def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber, q):
+    def getLinkInfo (self, chapterLink, cookies, q):
+        childs = chapterLink.get_childs()[0].get_childs()
+        host = str(childs[0].get_childs()[0].attrs['src'][0].split ('_')[1].split('.')[0])
 
-        r = requests.post (self._URL + 'site/login',  headers = {'Accept' : '*/*', \
-                                                                 'Accept-Encoding' : 'gzip, deflate', \
-                                                                 'Connection' : 'keep-alive', \
-                                                                 'Content-Length' : '104', \
-                                                                 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8', \
-                                                                 'Host' : 'www.pordede.com', \
-                                                                 'Referer' : 'http://www.pordede.com/', \
-                                                                 'User-Agent' : 'Mozilla/5.0' },  \
-                                                       data = {'LoginForm[username]': 'gunkyProject', \
-                                                               'LoginForm[password]': '123456', \
-                                                               'popup' : '1', \
-                                                               'sesscheck' : 'ne09kk9c0ua7mgdjmcn6qs9fq1'})
+        _parser = Parser ()
+
+        try:
+            if isValidHost (host):
+                flags = childs[1].get_by (tag = 'div')
+
+                l = Link ()
+
+                l.setProviderName (self._name)
+
+                if 'spanish' in flags[0].attrs['class'][0]:
+                    if 'LAT' in flags[0].attrs['data'][0]:
+                        l.setLanguage ("Latin")
+                    else:
+                        l.setLanguage ("Spanish")
+                elif 'english' in flags[0].attrs['class'][0]:
+                    l.setLanguage ('English')
+
+                if (len (flags) == 2):
+                    if 'spanish' in flags[1].attrs['class'][0]:
+                        l.setSubtitles ('Spanish')
+                    else:
+                        l.setSubtitles ('English')
+
+                l.setHost (host)
+
+                url = str(self._URL[:-1] + chapterLink.attrs['href'][0])
+
+                r = requests.get (url, cookies = cookies)
+                data = _parser.feed (r.text)
+                url = data.get_by (clazz = 'episodeText')[0].attrs['href'][0]
+
+                r =  requests.get (self._URL[:-1] + url, cookies = cookies)
+                l.setURL (r.url)
+
+                q.put((self._name, l))
+        except Exception as e:
+            pass
+
+    def getChapterUrls (self, serieUrl, seasonNumber, chapterNumber, q):
+        #print '  -> Searching in ' + str (self._name) + '...'
+
+        r = requests.post (self._URL + 'site/login',  \
+            headers = {'Accept' : '*/*', \
+                     'Accept-Encoding' : 'gzip, deflate', \
+                     'Connection' : 'keep-alive', \
+                     'Content-Length' : '104', \
+                     'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8', \
+                     'Host' : 'www.pordede.com', \
+                     'Referer' : 'http://www.pordede.com/', \
+                     'User-Agent' : 'Mozilla/5.0' },  \
+            data = {'LoginForm[username]': 'gunkyProject', \
+                     'LoginForm[password]': '123456', \
+                     'popup' : '1', \
+                     'sesscheck' : 'ne09kk9c0ua7mgdjmcn6qs9fq1'})
 
         cookies = r.cookies
         r = requests.get (serieUrl, cookies = cookies)
@@ -115,56 +163,22 @@ class LinksProviderPordede(LinksProvider):
 
         chapterUrlArray = []
 
-        for cl in chapterLinks:
-            try:
+        i = 0
 
-                childs = cl.get_childs()[0].get_childs()
-                host = str(childs[0].get_childs()[0].attrs['src'][0].split ('_')[1].split('.')[0])
+        numThreads = len (chapterLinks) // 4
+        while (i < len (chapterLinks)):
 
-                if isValidHost (host):
-                    flags = childs[1].get_by (tag = 'div')
+            threads = []
+            j = 0
+            for j in range (0, numThreads):
+                if i >= len (chapterLinks):
+                    break
 
-                    l = Link ()
+                print i
+                threads.append (Thread (target=self.getLinkInfo, args= (chapterLinks[i], cookies, q)))
+                i += 1
 
-                    l.setProviderName (self._name)
+            for thread in threads: thread.start()
+            for thread in threads: thread.join()
 
-                    if 'spanish' in flags[0].attrs['class'][0]:
-                        if 'LAT' in flags[0].attrs['data'][0]:
-                            l.setLanguage ("Latin")
-                        else:
-                            l.setLanguage ("Spanish")
-                    elif 'english' in flags[0].attrs['class'][0]:
-                        l.setLanguage ('English')
-
-                    if (len (flags) == 2):
-                        if 'spanish' in flags[1].attrs['class'][0]:
-                            l.setSubtitles ('Spanish')
-                        else:
-                            l.setSubtitles ('English')
-
-
-                    l.setHost (host)
-
-                    url = str(self._URL[:-1] + cl.attrs['href'][0])
-
-                    r = requests.get (url, cookies = cookies)
-                    data = _parser.feed (r.text)
-                    url = data.get_by (clazz = 'episodeText')[0].attrs['href'][0]
-
-                    r =  requests.get (self._URL[:-1] + url, cookies = cookies)
-                    l.setURL (r.url)
-
-                    itemFound = False
-                    for item in chapterUrlArray:
-                        if str(item.getURL ()) == str(l.getURL ()):
-                            itemFound = True
-
-                    if not itemFound:
-                        chapterUrlArray.append (l)
-
-            except Exception as e:
-                print e
-                pass
-
-        for elem in chapterUrlArray:
-            q.put((self._name, elem))
+        #print '  -> Search finished in ' + str (self._name) + '...'

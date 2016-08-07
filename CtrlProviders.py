@@ -17,6 +17,7 @@ from Season import Link
 from Tools import isNumber
 
 from threading import Thread
+import time
 from Queue import Queue
 
 class CtrlProviders():
@@ -26,7 +27,7 @@ class CtrlProviders():
         self.TMP_PATH = tmpPath
         self._infoProviderImdb = InfoProviderImdb ()
 
-        #self._linkProviders = [LinksProviderSeriesAdicto(), LinksProviderSeriesFlv(), LinksProviderSeriesPepito()]
+        #self._linkProviders = [LinksProviderPordede(), LinksProviderSeriesAdicto(), LinksProviderSeriesFlv(), LinksProviderSeriesPepito()]
         self._linkProviders = [LinksProviderPordede(), LinksProviderSeriesAdicto(), LinksProviderSeriesPepito()]
 
     def downloadVideo (self, url, host, name):
@@ -37,12 +38,11 @@ class CtrlProviders():
         elif 'nowvideo' in host.lower():
             d = DownloadNowVideo ()
             downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
-
-        elif 'streamin' in host.lower() or 'streaminto' in host.lower():
-            d =  DownloadStreamin ()
-            downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
         elif 'streamplay' in host.lower():
             d =  DownloadStreamPlay ()
+            downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
+        elif 'streamin' in host.lower() or 'streaminto' in host.lower():
+            d =  DownloadStreamin ()
             downloadErr = d.downloadVideo (url, self.TMP_PATH + '/' + name)
         else:
             print '  -> host "' + host + '" not defined for download'
@@ -85,7 +85,7 @@ class CtrlProviders():
         q = Queue()
 
         threads = []
-
+        print ''
         for mainPage, linkProvider in [(x[1], y) for x in mainPagesLinks for y in self._linkProviders if x[0] == y._name]:
             threads.append(Thread(target=linkProvider.getChapterUrls, args=(mainPage, seasonNumber, chapterNumber, q)))
 
@@ -96,6 +96,5 @@ class CtrlProviders():
 
         while q.qsize() > 0:
             data.append(q.get()[1])
-
 
         return data
