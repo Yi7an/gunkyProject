@@ -24,6 +24,8 @@ class LinksProviderPordede(LinksProvider):
 
         if serieName.lower() == 'daredevil':
             serieName = "marvel's daredevil"
+	elif serieName.lower() =='gambling apocalypse kaiji':
+	    serieName = 'kaiji'
 
         url = self._URL + 'site/login'
 
