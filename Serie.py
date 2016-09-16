@@ -131,9 +131,9 @@ class Serie ():
 		print ''
 		print ' -> name: ' + self._name
 		print ' -> description: ' + self._description
-		print ' -> links [' + str(len(self._mainPageLinks)) + ']'
+		print ' -> links [' + str(len(self._mainPageLinks [0])) + ']'
 		for l in self._mainPageLinks:
-			print '   -> ' + str(l)
+			print '   -> (' + str(l [0]) + ')  \'' + str(l [1]) + '\''
 		print ' -> seasons [' + str(len(self._seasons)) + ']'
 		for n, s in enumerate (self._seasons):
 			print '   -> season ' + str(n + 1) + ' [' + str (len(s.getChapters())) + ']'

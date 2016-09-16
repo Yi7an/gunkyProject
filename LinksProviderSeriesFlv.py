@@ -25,7 +25,7 @@ class LinksProviderSeriesFlv(LinksProvider):
         display = Display (visible=0, size=(800, 600))
         display.start ()
 
-        driver = webdriver.Firefox()
+        driver = webdriver.Chrome()
         driver.set_page_load_timeout(60)
         driver.get(self._URL)
 

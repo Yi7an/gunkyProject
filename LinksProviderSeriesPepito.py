@@ -26,7 +26,7 @@ class LinksProviderSeriesPepito(LinksProvider):
         display = Display (visible=0, size=(800, 600))
         display.start ()
 
-        driver = webdriver.Firefox()
+        driver = webdriver.Chrome()
         driver.set_page_load_timeout(60)
 
         menuItemFound = False
@@ -37,7 +37,7 @@ class LinksProviderSeriesPepito(LinksProvider):
 
                 driver.get(self._URL)
                 driver.find_element_by_name ('searchquery').send_keys(serieName)
-                
+
                 _parser = Parser ()
                 li = driver.find_element_by_class_name ('ui-menu-item')
                 data = _parser.feed(str(li.get_attribute('innerHTML').encode('utf-8')))
