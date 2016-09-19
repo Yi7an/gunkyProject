@@ -9,6 +9,8 @@ from Tools import isValidHost
 
 from Season import Link
 
+from Queue import Queue
+
 class LinksProviderSeriesAdicto(LinksProvider):
 
     def __init__ (self):
@@ -22,15 +24,15 @@ class LinksProviderSeriesAdicto(LinksProvider):
         r = requests.get (url, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
+            raise Exception ('  -> error getting serie from SeriesAdicto')
             return
-            #raise Exception ('  -> error getting serie from SeriesAdicto')
 
         _parser = Parser ()
         data = _parser.feed (r.text)
 
         clazz = data.get_by (clazz = 'col-xs-6 col-sm-4 col-md-2')
-        #if len (clazz) != 1:
-        #    raise Exception ('  -> serie "' + serieName + '" not found in SeriesAdicto')
+        if len (clazz) == 0:
+            raise Exception ('  -> serie "' + serieName + '" not found in SeriesAdicto')
 
         q.put((self._name, self._URL[:-1] + str(clazz[0].get_childs()[0].attrs['href'][0])))
 
@@ -40,8 +42,8 @@ class LinksProviderSeriesAdicto(LinksProvider):
         r = requests.get (serieUrl, headers={ "user-agent": "Mozilla/5.0" })
 
         if r.status_code != 200:
+            raise Exception ('  -> error getting serie from SeriesAdicto')
             return
-            #raise Exception ('  -> error getting serie from SeriesAdicto')
 
         _parser = Parser ()
         data = _parser.feed (r.text)
@@ -98,3 +100,12 @@ class LinksProviderSeriesAdicto(LinksProvider):
 
         for elem in chapterUrlArray:
             q.put((self._name, elem))
+
+#lpsa = LinksProviderSeriesAdicto ()
+#q = Queue ()
+
+#lpsa.getMainPageLink ('suits', q)
+#lpsa.getChapterUrls (q.get () [1], 1, 1, q)
+
+#while q.qsize () > 0:
+#    q.get ()[1].printLink ()
