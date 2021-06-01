@@ -18,5 +18,5 @@ SQLObject==2.1.2
 sqlparse==0.1.18
 ssh-import-id==3.21
 Tempita==0.5.2
-urllib3==1.7.1
+urllib3==1.26.5
 wheel==0.26.0
